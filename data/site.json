@@ -1,0 +1,270 @@
+{
+  "schemaVersion": 1,
+  "site": {
+    "name": "福プロジェクト",
+    "englishName": "FUKU PROJECT",
+    "description": "音楽を通して、人と人がつながっていく。福プロジェクト公式サイト。",
+    "heroCopy": [
+      "音楽で、",
+      "人と街をつなぐ。"
+    ],
+    "heroLabel": "MUSIC / LIVE / COMMUNITY / KAGOSHIMA",
+    "draftCopy": true,
+    "heroImage": "assets/stage.svg",
+    "heroImageAlt": "メイン写真差し替え用のライブイラスト"
+  },
+  "about": {
+    "title": "福プロジェクトとは。",
+    "lead": "それぞれの個性が、\nひとつの音になる。",
+    "body": "音楽を通して、人と人、地域と人をつなぐ。\nそれぞれの場所で活動するメンバーが集まり、ここでしか生まれない時間をつくる。\n福プロジェクトは、音楽のある出会いを届けていきます。",
+    "image": "assets/stage.svg",
+    "imageAlt": "ライブ写真差し替え用のステージイラスト"
+  },
+  "mind": {
+    "title": "福プロジェクトの想い。",
+    "message": "この音が、\n誰かの「福」になる。",
+    "body": "ステージの上も、客席も、その先の街も。\n音楽が鳴った瞬間に、少しだけ近くなる。\nそんなつながりを、ひとつずつ。",
+    "image": "assets/stage.svg"
+  },
+  "members": [
+    {
+      "id": "member-01",
+      "name": "NAME COMING SOON",
+      "part": "PART — COMING SOON",
+      "image": "assets/member-01.svg",
+      "imageAlt": "メンバー写真掲載予定",
+      "bio": "プロフィールは近日公開予定です。",
+      "socials": {
+        "instagram": null,
+        "x": null,
+        "youtube": null,
+        "website": null
+      },
+      "placeholder": true,
+      "upcomingActivities": [],
+      "published": true,
+      "sortOrder": 10
+    },
+    {
+      "id": "member-02",
+      "name": "NAME COMING SOON",
+      "part": "PART — COMING SOON",
+      "image": "assets/member-02.svg",
+      "imageAlt": "メンバー写真掲載予定",
+      "bio": "プロフィールは近日公開予定です。",
+      "socials": {
+        "instagram": null,
+        "x": null,
+        "youtube": null,
+        "website": null
+      },
+      "placeholder": true,
+      "upcomingActivities": [],
+      "published": true,
+      "sortOrder": 20
+    },
+    {
+      "id": "member-03",
+      "name": "NAME COMING SOON",
+      "part": "PART — COMING SOON",
+      "image": "assets/member-03.svg",
+      "imageAlt": "メンバー写真掲載予定",
+      "bio": "プロフィールは近日公開予定です。",
+      "socials": {
+        "instagram": null,
+        "x": null,
+        "youtube": null,
+        "website": null
+      },
+      "placeholder": true,
+      "upcomingActivities": [],
+      "published": true,
+      "sortOrder": 30
+    },
+    {
+      "id": "member-04",
+      "name": "NAME COMING SOON",
+      "part": "PART — COMING SOON",
+      "image": "assets/member-04.svg",
+      "imageAlt": "メンバー写真掲載予定",
+      "bio": "プロフィールは近日公開予定です。",
+      "socials": {
+        "instagram": null,
+        "x": null,
+        "youtube": null,
+        "website": null
+      },
+      "placeholder": true,
+      "upcomingActivities": [],
+      "published": true,
+      "sortOrder": 40
+    },
+    {
+      "id": "member-05",
+      "name": "NAME COMING SOON",
+      "part": "PART — COMING SOON",
+      "image": "assets/member-05.svg",
+      "imageAlt": "メンバー写真掲載予定",
+      "bio": "プロフィールは近日公開予定です。",
+      "socials": {
+        "instagram": null,
+        "x": null,
+        "youtube": null,
+        "website": null
+      },
+      "placeholder": true,
+      "upcomingActivities": [],
+      "published": true,
+      "sortOrder": 50
+    },
+    {
+      "id": "member-06",
+      "name": "NAME COMING SOON",
+      "part": "PART — COMING SOON",
+      "image": "assets/member-06.svg",
+      "imageAlt": "メンバー写真掲載予定",
+      "bio": "プロフィールは近日公開予定です。",
+      "socials": {
+        "instagram": null,
+        "x": null,
+        "youtube": null,
+        "website": null
+      },
+      "placeholder": true,
+      "upcomingActivities": [],
+      "published": true,
+      "sortOrder": 60
+    },
+    {
+      "id": "member-07",
+      "name": "NAME COMING SOON",
+      "part": "PART — COMING SOON",
+      "image": "assets/member-07.svg",
+      "imageAlt": "メンバー写真掲載予定",
+      "bio": "プロフィールは近日公開予定です。",
+      "socials": {
+        "instagram": null,
+        "x": null,
+        "youtube": null,
+        "website": null
+      },
+      "placeholder": true,
+      "upcomingActivities": [],
+      "published": true,
+      "sortOrder": 70
+    },
+    {
+      "id": "member-08",
+      "name": "NAME COMING SOON",
+      "part": "PART — COMING SOON",
+      "image": "assets/member-08.svg",
+      "imageAlt": "メンバー写真掲載予定",
+      "bio": "プロフィールは近日公開予定です。",
+      "socials": {
+        "instagram": null,
+        "x": null,
+        "youtube": null,
+        "website": null
+      },
+      "placeholder": true,
+      "upcomingActivities": [],
+      "published": true,
+      "sortOrder": 80
+    }
+  ],
+  "activity": [
+    {
+      "id": "live",
+      "category": "LIVE",
+      "title": "音楽を、目の前で。",
+      "body": "ライブ・演奏を通して、同じ場所でしか生まれない時間を。",
+      "image": "assets/stage.svg",
+      "status": "活動情報は近日公開"
+    },
+    {
+      "id": "event",
+      "category": "EVENT",
+      "title": "特別な一日を、ともに。",
+      "body": "イベント出演や、さまざまな企画との出会い。",
+      "image": "assets/session.svg",
+      "status": "活動情報は近日公開"
+    },
+    {
+      "id": "community",
+      "category": "COMMUNITY",
+      "title": "街と、人と、つながる。",
+      "body": "地域・企業とのコラボレーションや、新しい取り組みへ。",
+      "image": "assets/community.svg",
+      "status": "活動情報は近日公開"
+    }
+  ],
+  "gallery": [
+    {
+      "id": "gallery-1",
+      "image": "assets/stage.svg",
+      "alt": "活動写真差し替え用のイラスト",
+      "caption": "ON STAGE",
+      "placeholder": true
+    },
+    {
+      "id": "gallery-2",
+      "image": "assets/session.svg",
+      "alt": "活動写真差し替え用のイラスト",
+      "caption": "BACKSTAGE",
+      "placeholder": true
+    },
+    {
+      "id": "gallery-3",
+      "image": "assets/community.svg",
+      "alt": "活動写真差し替え用のイラスト",
+      "caption": "TOGETHER",
+      "placeholder": true
+    },
+    {
+      "id": "gallery-4",
+      "image": "assets/stage.svg",
+      "alt": "活動写真差し替え用のイラスト",
+      "caption": "IN THE MOMENT",
+      "placeholder": true
+    },
+    {
+      "id": "gallery-5",
+      "image": "assets/session.svg",
+      "alt": "活動写真差し替え用のイラスト",
+      "caption": "OUR SOUND",
+      "placeholder": true
+    }
+  ],
+  "youtube": {
+    "videoId": null,
+    "title": "福プロジェクト ライブ映像",
+    "poster": "assets/stage.svg"
+  },
+  "nextLive": {
+    "title": null,
+    "date": null,
+    "venue": null,
+    "description": "次のライブ情報は、こちらでお知らせします。"
+  },
+  "socials": {
+    "instagram": null,
+    "x": null,
+    "youtube": null
+  },
+  "contact": {
+    "email": null,
+    "formUrl": null,
+    "categories": [
+      "ライブ・イベント出演",
+      "企業・地域イベント",
+      "コラボレーション",
+      "協賛",
+      "その他"
+    ],
+    "message": "音楽のある場所を、一緒につくりませんか。\n出演・企画・コラボレーションのご相談はこちら。"
+  },
+  "ticket": {
+    "url": null
+  },
+  "partners": []
+}
