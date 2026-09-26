@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#151515">
+  <meta name="description" content="音楽を通して、人と人がつながっていく。福プロジェクト公式サイト。メンバー、活動情報、ライブ・出演のご相談。">
+  <meta property="og:title" content="福プロジェクト | FUKU PROJECT">
+  <meta property="og:description" content="音楽で、人と街をつなぐ。MUSIC / LIVE / COMMUNITY / KAGOSHIMA">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="ja_JP">
+  <title>福プロジェクト | FUKU PROJECT</title>
+  <link rel="icon" href="./assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./src/style.css">
+  <script type="module" src="./src/app.js"></script>
+</head>
+<body>
+  <a href="#main" class="skip-link">本文へスキップ</a>
+  <header class="header">
+    <a class="logo" href="#top" aria-label="福プロジェクト トップ">FUKU<br>PROJECT<span>SOUND & CONNECTION</span></a>
+    <nav class="nav" id="navigation" aria-label="メインメニュー">
+      <a href="#about">ABOUT</a><a href="#mind">MIND</a><a href="#members">MEMBERS</a><a href="#activity">ACTIVITY</a><a href="#gallery">GALLERY</a><a href="#youtube">MOVIE</a><a href="#next-live">LIVE</a><a href="#follow">SNS</a>
+    </nav>
+    <div class="header-socials socials" data-socials></div>
+    <button class="menu-toggle" aria-label="メニューを開く" aria-expanded="false" aria-controls="navigation"><span></span><span></span></button>
+    <div class="header-actions"><a href="#contact" class="button offer">OFFER</a><button class="button outline" data-ticket>TICKET</button></div>
+  </header>
+  <main id="main">
+    <section class="hero" id="top" aria-labelledby="hero-title">
+      <div class="hero-topline"><span>福プロジェクト / OFFICIAL WEBSITE</span><span>KAGOSHIMA, JAPAN</span></div>
+      <div class="hero-visual"><img id="hero-image" src="./assets/stage.svg" alt="メイン写真掲載予定" width="1280" height="800" fetchpriority="high"></div>
+      <div class="hero-title-wrap"><p class="hero-kicker">MUSIC BRINGS US TOGETHER.</p><h1 id="hero-title">FUKU<br><span>PROJECT</span></h1></div>
+      <div class="hero-bottom"><p class="hero-copy" id="hero-copy">音楽で、<br>人と街をつなぐ。</p><div><p class="micro" id="hero-label">MUSIC / LIVE / COMMUNITY / KAGOSHIMA</p><a href="#about" class="scroll-link">SCROLL TO DISCOVER </a></div></div>
+      <p class="hero-note">VISUAL PREVIEW — 写真・プロフィールは順次公開予定</p>
+    </section>
+    <section id="about" class="section about">
+      <div class="section-heading reveal"><p class="eyebrow">01 / WHO WE ARE</p><h2>ABOUT<span>福プロジェクトとは。</span></h2></div>
+      <div class="about-layout reveal"><img id="about-image" src="./assets/stage.svg" alt="ライブ写真掲載予定" loading="lazy" width="1280" height="800"><div class="about-copy"><p class="micro">DIFFERENT ROOTS. SAME GROOVE.</p><h3 id="about-lead"></h3><p id="about-body" class="body-copy"></p></div></div>
+    </section>
+    <section id="mind" class="mind section dark">
+      <div class="section-heading reveal"><p class="eyebrow">02 / WHAT WE BELIEVE</p><h2>OUR MIND<span>福プロジェクトの想い。</span></h2></div>
+      <div class="mind-image photo reveal"><img id="mind-image" src="./assets/stage.svg" alt="ライブ写真掲載予定のイラスト" loading="lazy" width="1280" height="800"><h3 id="mind-message"></h3><span class="micro">BEYOND THE STAGE.</span></div>
+      <div class="mind-footer reveal"><p id="mind-body" class="body-copy"></p><span class="micro">SOUND.<br>PEOPLE.<br>CONNECTION.</span></div>
+    </section>
+    <section id="members" class="section members">
+      <div class="section-heading reveal"><p class="eyebrow">03 / THE PEOPLE</p><h2>MEMBERS<span>それぞれの音が、ここで出会う。</span></h2><p class="heading-aside">MEET OUR MEMBERS.<br>プロフィールと今後の活動。 </p></div>
+      <div class="member-grid" id="member-grid"></div>
+      <p class="section-footnote">PORTRAITS & PROFILES — COMING SOON</p>
+    </section>
+    <section id="activity" class="section activity">
+      <div class="section-heading reveal"><p class="eyebrow">04 / WHAT WE DO</p><h2>ACTIVITY<span>音楽のある場所へ。</span></h2></div>
+      <div id="activity-list" class="activity-list"></div>
+      <a href="#contact" class="text-link">出演・コラボレーションのご相談 </a>
+    </section>
+    <section id="gallery" class="section gallery dark">
+      <div class="section-heading reveal"><p class="eyebrow">05 / OUR SCENES</p><h2>GALLERY<span>音が聞こえる、その瞬間。</span></h2><div class="gallery-controls"><button id="gallery-prev" aria-label="前の写真へ">PREV</button><button id="gallery-next" aria-label="次の写真へ">NEXT</button></div></div>
+      <div class="gallery-track" id="gallery-track" tabindex="0" role="region" aria-label="活動写真。左右キーまたはスワイプでスクロール"></div>
+      <div class="gallery-footer micro"><span>SCROLL / SWIPE </span><span>PHOTO ARCHIVE — COMING SOON</span></div>
+    </section>
+    <section id="youtube" class="section youtube">
+      <div class="section-heading reveal"><p class="eyebrow">06 / PRESS PLAY</p><h2>WATCH US<span>画面越しにも、伝わる熱を。</span></h2><span class="micro">YOUTUBE / LIVE FILM</span></div>
+      <div id="video-container" class="video-container reveal"><img src="./assets/stage.svg" alt="ライブ映像公開予定" width="1280" height="800" loading="lazy"><button id="play-video" class="play-button" aria-label="YouTubeの公開状況を表示"><span>▶</span><strong>COMING SOON</strong><small>ライブ映像は近日公開予定です</small></button></div>
+    </section>
+    <section id="next-live" class="section next-live dark">
+      <div class="next-live-head"><p class="eyebrow">07 / SEE YOU THERE</p><h2>NEXT LIVE<span>次は、同じ場所で。</span></h2></div>
+      <div class="next-live-info"><p class="live-status" id="live-title">COMING<br>SOON</p><p id="live-description"></p><p id="live-meta" class="micro"></p><button class="button light" data-ticket>TICKET </button></div>
+    </section>
+    <section class="follow section" id="follow"><h2>FOLLOW US.</h2><div class="follow-links" id="follow-links"></div></section>
+    <section id="contact" class="section contact">
+      <div class="section-heading"><p class="eyebrow">08 / GET IN TOUCH</p><p>出演依頼・お問い合わせ</p></div>
+      <h2 class="contact-title reveal">LET’S MAKE<br>SOMETHING<br><span>TOGETHER.</span></h2>
+      <div class="contact-bottom"><div class="contact-intro"><p class="body-copy" id="contact-message"></p><p class="micro contact-note" id="contact-status" aria-live="polite"></p><a id="external-contact" class="button" hidden target="_blank" rel="noopener noreferrer">お問い合わせフォームを開く</a></div>
+        <form id="offer-form" class="offer-form" aria-label="出演依頼・お問い合わせフォーム">
+          <div class="form-row"><label>お名前 <span>必須</span><input name="name" autocomplete="name" required maxlength="100"></label><label>団体・会社名<input name="organization" autocomplete="organization" maxlength="150"></label></div>
+          <label>メールアドレス <span>必須</span><input name="email" type="email" autocomplete="email" required maxlength="254"></label>
+          <div class="form-row"><label for="contact-category">ご相談内容<select id="contact-category" name="category"></select></label><label>開催予定日<input name="date" type="date"></label></div>
+          <label>お問い合わせ内容 <span>必須</span><textarea name="message" rows="6" required maxlength="5000" placeholder="会場・ご希望の内容などをお聞かせください。"></textarea></label>
+          <p class="form-help" id="form-help">受付開始まで入力内容は送信・保存されません。</p>
+          <button id="contact-button" class="button" type="submit" disabled aria-describedby="form-help">受付準備中</button>
+        </form>
+      </div>
+    </section>
+  </main>
+  <footer class="footer"><a href="#top" class="footer-logo">FUKU PROJECT</a><div><p>福プロジェクト</p><p class="micro">MUSIC / LIVE / COMMUNITY / KAGOSHIMA</p></div><a href="#top">BACK TO TOP </a><p class="micro">© <span id="year">2026</span> FUKU PROJECT</p></footer>
+  <dialog id="modal" aria-labelledby="modal-title"><div class="modal-top"><span class="micro">FUKU PROJECT</span><button class="modal-close" aria-label="閉じる">CLOSE ×</button></div><div id="modal-content"></div></dialog>
+  <noscript><div class="noscript">メンバー詳細や最新情報を見るにはJavaScriptを有効にしてください。福プロジェクトの各種情報は順次公開予定です。</div></noscript>
+  <div id="load-error" class="load-error" role="alert" hidden>情報を読み込めませんでした。通信環境をご確認のうえ、ページを再読み込みしてください。</div>
+</body>
+</html>
