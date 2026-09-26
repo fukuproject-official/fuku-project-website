@@ -32,21 +32,11 @@ npm run preview
 
 **未設定：** 本人写真、メンバー名・担当・経歴、正式紹介文、活動実績、SNS URL、YouTube動画ID、ライブ日程、問い合わせ先。未設定のリンクは準備中案内を表示します。問い合わせ先を入れるまでは、実際の出演依頼の受信はできません。
 
-## GitHubに反映する
+## GitHubへの反映
 
 対象: `https://github.com/fukuproject-official/fuku-project-website`
 
-初期確認時は空の公開リポジトリでした。ローカルブランチは `codex/initial-website` です。GitHubへのpush・公開は行っていません。
-
-```sh
-git add .
-git commit -m "Build initial Fuku Project official website"
-git push -u origin codex/initial-website
-```
-
-空リポジトリの初回は、このブランチが最初のブランチになります。既存コミットが増えていた場合は先に `git fetch origin` して差分を確認し、強制pushせず通常のPRで統合してください。
-
-ZIPからブラウザで入れる場合は、解凍後の `index.html`、`src`、`data`、`assets`、`scripts`、`docs`、`tests`、`package.json`、`_headers`、`404.html` と隠しファイルをリポジトリ直下に置きます。`dist`や`.git`はアップロード不要です。
+初版ソースは `main` に保存済みです。更新はこのリポジトリを取得し、変更を確認して通常のcommit / pushまたはPull Requestで反映してください。強制pushは不要です。`dist/` は生成物のためソースリポジトリには含めません。
 
 ## Cloudflare Pagesへ公開する際の設定
 
