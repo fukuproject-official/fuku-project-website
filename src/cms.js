@@ -11,6 +11,13 @@ export function youtubeId(value) {
     return /^[\w-]{11}$/.test(id || '') ? id : null;
   } catch { return null; }
 }
+export function normalizeContent(c) {
+ c.albums ||= [];c.site.heroVideo ||= '';c.nextLive.image ||= '';c.nextLive.imageAlt ||= '';
+ for(const id of ['text-20','text-89']){const item=c.copy?.[id];if(item&&Object.keys(item.values).length>1)item.values={'0':Object.values(item.values).join('')};}
+ const old=c.copy?.['text-86']?.values;if(old)for(const k of Object.keys(old))old[k]=old[k].replace('プロフィールと今後の活動。','プロフィール。');
+ delete c.socials.x;for(const m of c.members)delete m.socials.x;
+ return c;
+}
 export function validateContent(c) {
   if (!c || c.schemaVersion !== 1 || !Array.isArray(c.members)) throw new Error('サイトデータの形式が違います。');
   for (const name of ['site','about','mind','youtube','nextLive','socials','contact','ticket']) if (!c[name] || typeof c[name] !== 'object') throw new Error(`${name} のデータがありません。`);
@@ -21,11 +28,12 @@ export function validateContent(c) {
     if (!m.id || ids.has(m.id) || !m.name || !Array.isArray(m.upcomingActivities) || !m.socials) throw new Error('メンバーの名前・ID・活動情報を確認してください。');
     ids.add(m.id);
   }
+  if(c.albums && (!Array.isArray(c.albums)||c.albums.some(a=>!a.title||!Array.isArray(a.photos))))throw new Error('アルバムのタイトルと写真を確認してください。');
   if (c.youtube.videoId && !youtubeId(c.youtube.videoId)) throw new Error('YouTubeのURLを確認してください。');
   const visit = (v, key = '') => {
     if (v && typeof v === 'object') { for (const [k,x] of Object.entries(v)) visit(x,k); return; }
     if (!v || typeof v !== 'string') return;
-    if (['url','formUrl','instagram','x','youtube','website'].includes(key) && !/^https:\/\//.test(v)) throw new Error('リンクは https:// から始まるURLを入力してください。');
+    if (['url','formUrl','instagram','x','youtube','website','heroVideo'].includes(key) && !/^https:\/\//.test(v)) throw new Error('リンクは https:// から始まるURLを入力してください。');
     if (['image','heroImage','poster'].includes(key) && !/^(https:\/\/|assets\/[\w./-]+$)/.test(v)) throw new Error('写真をアップロードするか、HTTPSの画像URLを入力してください。');
   }; visit(c);
   return c;
