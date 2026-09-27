@@ -266,5 +266,554 @@
   "ticket": {
     "url": null
   },
-  "partners": []
+  "partners": [],
+  "copy": {
+    "text-16": {
+      "label": "本文へスキップ",
+      "values": {
+        "0": "本文へスキップ"
+      }
+    },
+    "text-18": {
+      "label": "FUKU",
+      "values": {
+        "0": "FUKU",
+        "1": "PROJECT"
+      }
+    },
+    "text-20": {
+      "label": "SOUND",
+      "values": {
+        "0": "SOUND ",
+        "1": "&",
+        "2": " CONNECTION"
+      }
+    },
+    "text-22": {
+      "label": "ABOUT",
+      "values": {
+        "0": "ABOUT"
+      }
+    },
+    "text-23": {
+      "label": "MIND",
+      "values": {
+        "0": "MIND"
+      }
+    },
+    "text-24": {
+      "label": "MEMBERS",
+      "values": {
+        "0": "MEMBERS"
+      }
+    },
+    "text-25": {
+      "label": "ACTIVITY",
+      "values": {
+        "0": "ACTIVITY"
+      }
+    },
+    "text-26": {
+      "label": "GALLERY",
+      "values": {
+        "0": "GALLERY"
+      }
+    },
+    "text-27": {
+      "label": "MOVIE",
+      "values": {
+        "0": "MOVIE"
+      }
+    },
+    "text-28": {
+      "label": "LIVE",
+      "values": {
+        "0": "LIVE"
+      }
+    },
+    "text-29": {
+      "label": "SNS",
+      "values": {
+        "0": "SNS"
+      }
+    },
+    "text-35": {
+      "label": "OFFER",
+      "values": {
+        "0": "OFFER"
+      }
+    },
+    "text-36": {
+      "label": "TICKET",
+      "values": {
+        "0": "TICKET"
+      }
+    },
+    "text-40": {
+      "label": "福プロジェクト / OFFICIAL WEBSITE",
+      "values": {
+        "0": "福プロジェクト / OFFICIAL WEBSITE"
+      }
+    },
+    "text-41": {
+      "label": "KAGOSHIMA, JAPAN",
+      "values": {
+        "0": "KAGOSHIMA, JAPAN"
+      }
+    },
+    "text-45": {
+      "label": "MUSIC BRINGS US TOGETHER.",
+      "values": {
+        "0": "MUSIC BRINGS US TOGETHER."
+      }
+    },
+    "text-46": {
+      "label": "FUKU",
+      "values": {
+        "0": "FUKU"
+      }
+    },
+    "text-48": {
+      "label": "PROJECT",
+      "values": {
+        "0": "PROJECT"
+      }
+    },
+    "text-50": {
+      "label": "音楽で、",
+      "values": {
+        "0": "音楽で、",
+        "1": "人と街をつなぐ。"
+      }
+    },
+    "text-53": {
+      "label": "MUSIC / LIVE / COMMUNITY / KAGOSHIMA",
+      "values": {
+        "0": "MUSIC / LIVE / COMMUNITY / KAGOSHIMA"
+      }
+    },
+    "text-54": {
+      "label": "SCROLL TO DISCOVER",
+      "values": {
+        "0": "SCROLL TO DISCOVER "
+      }
+    },
+    "text-55": {
+      "label": "VISUAL PREVIEW — 写真・プロフィールは順次公開予定",
+      "values": {
+        "0": "VISUAL PREVIEW — 写真・プロフィールは順次公開予定"
+      }
+    },
+    "text-58": {
+      "label": "01 / WHO WE ARE",
+      "values": {
+        "0": "01 / WHO WE ARE"
+      }
+    },
+    "text-59": {
+      "label": "ABOUT",
+      "values": {
+        "0": "ABOUT"
+      }
+    },
+    "text-60": {
+      "label": "福プロジェクトとは。",
+      "values": {
+        "0": "福プロジェクトとは。"
+      }
+    },
+    "text-64": {
+      "label": "DIFFERENT ROOTS. SAME GROOVE.",
+      "values": {
+        "0": "DIFFERENT ROOTS. SAME GROOVE."
+      }
+    },
+    "text-69": {
+      "label": "02 / WHAT WE BELIEVE",
+      "values": {
+        "0": "02 / WHAT WE BELIEVE"
+      }
+    },
+    "text-70": {
+      "label": "OUR MIND",
+      "values": {
+        "0": "OUR MIND"
+      }
+    },
+    "text-71": {
+      "label": "福プロジェクトの想い。",
+      "values": {
+        "0": "福プロジェクトの想い。"
+      }
+    },
+    "text-75": {
+      "label": "BEYOND THE STAGE.",
+      "values": {
+        "0": "BEYOND THE STAGE."
+      }
+    },
+    "text-78": {
+      "label": "SOUND.",
+      "values": {
+        "0": "SOUND.",
+        "1": "PEOPLE.",
+        "2": "CONNECTION."
+      }
+    },
+    "text-83": {
+      "label": "03 / THE PEOPLE",
+      "values": {
+        "0": "03 / THE PEOPLE"
+      }
+    },
+    "text-84": {
+      "label": "MEMBERS",
+      "values": {
+        "0": "MEMBERS"
+      }
+    },
+    "text-85": {
+      "label": "それぞれの音が、ここで出会う。",
+      "values": {
+        "0": "それぞれの音が、ここで出会う。"
+      }
+    },
+    "text-86": {
+      "label": "MEET OUR MEMBERS.",
+      "values": {
+        "0": "MEET OUR MEMBERS.",
+        "1": "プロフィールと今後の活動。 "
+      }
+    },
+    "text-89": {
+      "label": "PORTRAITS",
+      "values": {
+        "0": "PORTRAITS ",
+        "1": "&",
+        "2": " PROFILES — COMING SOON"
+      }
+    },
+    "text-92": {
+      "label": "04 / WHAT WE DO",
+      "values": {
+        "0": "04 / WHAT WE DO"
+      }
+    },
+    "text-93": {
+      "label": "ACTIVITY",
+      "values": {
+        "0": "ACTIVITY"
+      }
+    },
+    "text-94": {
+      "label": "音楽のある場所へ。",
+      "values": {
+        "0": "音楽のある場所へ。"
+      }
+    },
+    "text-96": {
+      "label": "出演・コラボレーションのご相談",
+      "values": {
+        "0": "出演・コラボレーションのご相談 "
+      }
+    },
+    "text-99": {
+      "label": "05 / OUR SCENES",
+      "values": {
+        "0": "05 / OUR SCENES"
+      }
+    },
+    "text-100": {
+      "label": "GALLERY",
+      "values": {
+        "0": "GALLERY"
+      }
+    },
+    "text-101": {
+      "label": "音が聞こえる、その瞬間。",
+      "values": {
+        "0": "音が聞こえる、その瞬間。"
+      }
+    },
+    "text-103": {
+      "label": "PREV",
+      "values": {
+        "0": "PREV"
+      }
+    },
+    "text-104": {
+      "label": "NEXT",
+      "values": {
+        "0": "NEXT"
+      }
+    },
+    "text-107": {
+      "label": "SCROLL / SWIPE",
+      "values": {
+        "0": "SCROLL / SWIPE "
+      }
+    },
+    "text-108": {
+      "label": "PHOTO ARCHIVE — COMING SOON",
+      "values": {
+        "0": "PHOTO ARCHIVE — COMING SOON"
+      }
+    },
+    "text-111": {
+      "label": "06 / PRESS PLAY",
+      "values": {
+        "0": "06 / PRESS PLAY"
+      }
+    },
+    "text-112": {
+      "label": "WATCH US",
+      "values": {
+        "0": "WATCH US"
+      }
+    },
+    "text-113": {
+      "label": "画面越しにも、伝わる熱を。",
+      "values": {
+        "0": "画面越しにも、伝わる熱を。"
+      }
+    },
+    "text-114": {
+      "label": "YOUTUBE / LIVE FILM",
+      "values": {
+        "0": "YOUTUBE / LIVE FILM"
+      }
+    },
+    "text-118": {
+      "label": "▶",
+      "values": {
+        "0": "▶"
+      }
+    },
+    "text-119": {
+      "label": "COMING SOON",
+      "values": {
+        "0": "COMING SOON"
+      }
+    },
+    "text-120": {
+      "label": "ライブ映像は近日公開予定です",
+      "values": {
+        "0": "ライブ映像は近日公開予定です"
+      }
+    },
+    "text-123": {
+      "label": "07 / SEE YOU THERE",
+      "values": {
+        "0": "07 / SEE YOU THERE"
+      }
+    },
+    "text-124": {
+      "label": "NEXT LIVE",
+      "values": {
+        "0": "NEXT LIVE"
+      }
+    },
+    "text-125": {
+      "label": "次は、同じ場所で。",
+      "values": {
+        "0": "次は、同じ場所で。"
+      }
+    },
+    "text-127": {
+      "label": "COMING",
+      "values": {
+        "0": "COMING",
+        "1": "SOON"
+      }
+    },
+    "text-131": {
+      "label": "TICKET",
+      "values": {
+        "0": "TICKET "
+      }
+    },
+    "text-133": {
+      "label": "FOLLOW US.",
+      "values": {
+        "0": "FOLLOW US."
+      }
+    },
+    "text-137": {
+      "label": "08 / GET IN TOUCH",
+      "values": {
+        "0": "08 / GET IN TOUCH"
+      }
+    },
+    "text-138": {
+      "label": "出演依頼・お問い合わせ",
+      "values": {
+        "0": "出演依頼・お問い合わせ"
+      }
+    },
+    "text-139": {
+      "label": "LET’S MAKE",
+      "values": {
+        "0": "LET’S MAKE",
+        "1": "SOMETHING"
+      }
+    },
+    "text-142": {
+      "label": "TOGETHER.",
+      "values": {
+        "0": "TOGETHER."
+      }
+    },
+    "text-147": {
+      "label": "お問い合わせフォームを開く",
+      "values": {
+        "0": "お問い合わせフォームを開く"
+      }
+    },
+    "text-150": {
+      "label": "お名前",
+      "values": {
+        "0": "お名前 "
+      }
+    },
+    "text-151": {
+      "label": "必須",
+      "values": {
+        "0": "必須"
+      }
+    },
+    "text-153": {
+      "label": "団体・会社名",
+      "values": {
+        "0": "団体・会社名"
+      }
+    },
+    "text-155": {
+      "label": "メールアドレス",
+      "values": {
+        "0": "メールアドレス "
+      }
+    },
+    "text-156": {
+      "label": "必須",
+      "values": {
+        "0": "必須"
+      }
+    },
+    "text-159": {
+      "label": "ご相談内容",
+      "values": {
+        "0": "ご相談内容"
+      }
+    },
+    "text-161": {
+      "label": "開催予定日",
+      "values": {
+        "0": "開催予定日"
+      }
+    },
+    "text-163": {
+      "label": "お問い合わせ内容",
+      "values": {
+        "0": "お問い合わせ内容 "
+      }
+    },
+    "text-164": {
+      "label": "必須",
+      "values": {
+        "0": "必須"
+      }
+    },
+    "text-166": {
+      "label": "受付開始まで入力内容は送信・保存されません。",
+      "values": {
+        "0": "受付開始まで入力内容は送信・保存されません。"
+      }
+    },
+    "text-167": {
+      "label": "受付準備中",
+      "values": {
+        "0": "受付準備中"
+      }
+    },
+    "text-169": {
+      "label": "FUKU PROJECT",
+      "values": {
+        "0": "FUKU PROJECT"
+      }
+    },
+    "text-171": {
+      "label": "福プロジェクト",
+      "values": {
+        "0": "福プロジェクト"
+      }
+    },
+    "text-172": {
+      "label": "MUSIC / LIVE / COMMUNITY / KAGOSHIMA",
+      "values": {
+        "0": "MUSIC / LIVE / COMMUNITY / KAGOSHIMA"
+      }
+    },
+    "text-173": {
+      "label": "BACK TO TOP",
+      "values": {
+        "0": "BACK TO TOP "
+      }
+    },
+    "text-174": {
+      "label": "©",
+      "values": {
+        "0": "© ",
+        "1": " FUKU PROJECT"
+      }
+    },
+    "text-175": {
+      "label": "2026",
+      "values": {
+        "0": "2026"
+      }
+    },
+    "text-178": {
+      "label": "FUKU PROJECT",
+      "values": {
+        "0": "FUKU PROJECT"
+      }
+    },
+    "text-179": {
+      "label": "CLOSE ×",
+      "values": {
+        "0": "CLOSE ×"
+      }
+    },
+    "text-182": {
+      "label": "メンバー詳細や最新情報を見るにはJavaScriptを有効にしてください。福プロジェクトの各種情報は順次公開予定です。",
+      "values": {
+        "0": "メンバー詳細や最新情報を見るにはJavaScriptを有効にしてください。福プロジェクトの各種情報は順次公開予定です。"
+      }
+    },
+    "text-183": {
+      "label": "情報を読み込めませんでした。通信環境をご確認のうえ、ページを再読み込みしてください。",
+      "values": {
+        "0": "情報を読み込めませんでした。通信環境をご確認のうえ、ページを再読み込みしてください。"
+      }
+    }
+  },
+  "ui": {
+    "memberKicker": "MEMBER",
+    "profileHeading": "PROFILE",
+    "upcomingHeading": "UPCOMING / 今後の活動",
+    "upcomingEmpty": "今後の活動は、決まり次第お知らせします。",
+    "memberSocialHeading": "FOLLOW / SNS",
+    "memberSocialEmpty": "SNSリンクは公開準備中です。",
+    "profileButton": "VIEW PROFILE",
+    "membersEmpty": "メンバー情報は準備中です。",
+    "galleryPlaceholder": "実際の活動写真は近日公開予定です。",
+    "ticketPreparing": "チケット販売ページは現在準備中です。\n公開まで、もうしばらくお待ちください。",
+    "videoPreparing": "ライブ映像は近日公開予定です。",
+    "playButton": "PLAY FILM",
+    "externalFormReady": "専用のお問い合わせフォームで受け付けています。",
+    "composeEmail": "メールを作成する",
+    "emailHelp": "入力内容を入れたメールアプリが開きます。内容を確認して送信してください。",
+    "contactReady": "出演・企画・協賛など、お気軽にご相談ください。",
+    "contactPreparing": "お問い合わせの受付は準備中です。"
+  }
 }
