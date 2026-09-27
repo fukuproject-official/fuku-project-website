@@ -11,7 +11,7 @@ function button(text,fn){const b=node('button',text);b.type='button';b.onclick=f
 function field(parent,obj,key,label=labels[key]||key){
  const v=obj[key]; if(key==='id'||key==='sortOrder'||key==='schemaVersion')return;
  if(['image','heroImage','poster'].includes(key)){photo(parent,obj,key,label);return;}
- if(Array.isArray(v)&&!['heroCopy','categories'].includes(key)){collection(parent,obj,key);return;}
+ if(Array.isArray(v)&&!['heroCopy','categories'].includes(key)){parent.append(node('h3',label));collection(parent,obj,key);return;}
  if(v&&typeof v==='object'&&!Array.isArray(v)){const d=node('details');d.append(node('summary',label));Object.keys(v).forEach(k=>field(d,v,k));parent.append(d);return;}
  const wrap=node('label',label);let input;
  if(typeof v==='boolean'){input=node('input');input.type='checkbox';input.checked=v;input.onchange=()=>{obj[key]=input.checked;changed();};wrap.prepend(input);}
@@ -67,9 +67,12 @@ async function start(){
 }
 async function save(){
  validateContent(content);if(pending)throw new Error('写真のアップロード完了をお待ちください。');
+ $('#editor').inert=true;$('#save').disabled=true;$('#preview').disabled=true;$('#publish').disabled=true;
+ try {
  if(config.url){const result=await api('/rest/v1/rpc/fuku_website_save',{method:'POST',body:JSON.stringify({document:content,expected_revision:revision})});revision=result;}
  else localStorage.setItem(DRAFT_KEY,JSON.stringify(content));
  dirty=false;$('#state').textContent=`下書き保存済み ${new Date().toLocaleTimeString('ja-JP')}`;notify(config.url?'下書きを保存しました。公開サイトはまだ変わりません。':'このブラウザに下書きを保存しました。');
+ } finally {$('#editor').inert=false;$('#save').disabled=false;$('#preview').disabled=false;$('#publish').disabled=!config.url||pending>0;}
 }
 const run=fn=>async()=>{try{await fn();}catch(e){notify(e.message);}};
 $('#save').onclick=run(save);
