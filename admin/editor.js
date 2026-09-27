@@ -15,7 +15,7 @@ function field(parent,obj,key,label=labels[key]||key){
  if(v&&typeof v==='object'&&!Array.isArray(v)){const d=node('details');d.append(node('summary',label));Object.keys(v).forEach(k=>field(d,v,k));parent.append(d);return;}
  const wrap=node('label',label);let input;
  if(typeof v==='boolean'){input=node('input');input.type='checkbox';input.checked=v;input.onchange=()=>{obj[key]=input.checked;changed();};wrap.prepend(input);}
- else {input=node(['body','bio','message','lead','description','heroCopy','categories'].includes(key)||String(v||'').includes('\n')?'textarea':'input'); input.value=Array.isArray(v)?v.join('\n'):v??''; if(input.tagName==='TEXTAREA')input.rows=4; input.oninput=()=>{obj[key]=Array.isArray(v)?input.value.split('\n').filter(Boolean):input.value||null;changed();};
+ else {input=node(['body','bio','message','lead','description','heroCopy','categories'].includes(key)||String(v||'').includes('\n')?'textarea':'input'); input.value=Array.isArray(v)?v.join('\n'):v??''; if(input.tagName==='TEXTAREA')input.rows=4; input.oninput=()=>{obj[key]=Array.isArray(v)?input.value.split('\n').filter(Boolean):input.value;changed();};
  if(key==='videoId'){input.value=v?`https://www.youtube.com/watch?v=${v}`:'';input.oninput=()=>{const id=youtubeId(input.value.trim());input.setCustomValidity(input.value&&!id?'YouTubeの動画URLを確認してください。':'');obj[key]=id||input.value||null;changed();};input.onchange=()=>{if(input.reportValidity())render();};}
  wrap.append(input);}
  parent.append(wrap);
