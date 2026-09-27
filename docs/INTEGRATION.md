@@ -1,35 +1,24 @@
-# 次段階の接続設計
+# HP管理画面と保存先
 
-## 公開データ
+`/admin/` はSupabase Authでログインする管理画面。`data/cms.json` にはURLと公開可能なpublishable keyだけを設定しています。秘密鍵は不要です。
 
-`src/content.js` の `loadContent()` がUIと保存先の境界です。現在は `data/site.json` を取得。Supabase接続後もschemaVersion 1の同じ構造を返すようにすれば、描画部分はそのまま使えます。
+保存先は承認済みの `fuku-ticket-dev` 内のHP専用テーブル。既存チケットテーブル・決済処理は変更しません。
 
-候補テーブルは `site_content`（about/mind/socials/contactのJSON）、`members`、`member_activities`、`activities`、`gallery`、`live_events`。全レコードにid、sort_order、published、updated_atを設けます。画像はStorage上の公開用バケットへ保存し、URLとaltを持たせます。既存チケット側のスキーマは本作業では参照・変更していません。導入時に重複や権限を確認します。
+- `fuku_website_admins`: 管理者本人の行だけSELECT可能。ブラウザからの追加・変更は禁止。
+- `fuku_website_drafts`: 管理者のみ読取可能。保存は認可チェック付きRPCのみ。
+- `fuku_website_public`: 公開済みデータだけを一般閲覧可能。非表示メンバーは公開RPCで除外。
+- `fuku_website_save`: リビジョン比較とトランザクションロックで競合する保存を拒否。
+- `fuku_website_publish`: 指定リビジョンを確認して原子的に公開。
+- `fuku-website-images`: 公開写真バケット。管理者だけアップロード可能。JPEG/PNG/WebP、8MB制限。既存Storageのpermissive policyによる権限拡張をrestrictive guardで防止。
 
-## /admin
+`supabase/website.sql` は新しい環境に初回適用するSQLです。適用済み環境に再実行しないでください。管理者の追加は本人のAuth UUIDを確認して、信頼されたSQL Editorでのみ行います。`supabase/verify.sql` は試験変更をロールバックしてRLS・保存競合・非表示情報の除外を検証します。
 
-未実装です。将来はSupabase Authでログインし、招待された管理者だけ更新できます。管理者一覧とRLSをサーバー側で管理し、URLを隠すだけの認可にしないでください。匿名ユーザーはpublished=trueのみ読めるRLS、更新は管理者だけのRLSにします。下書きと公開の区別、Storageの書込制限、画像サイズ・種別検証を追加します。
+ブラウザのアクセストークンはメモリだけに保持します。パスワードや秘密鍵をサイトデータ・localStorage・リポジトリへ保存しません。プレビュー用データはsessionStorageでプレビュータブに渡します。認証無しのプレビューURLだけでは下書きをサーバーから取得できません。
 
-フロントに配置するのは公開可能なpublishable keyのみ。service role / secret keyはブラウザやリポジトリに置かず、サーバーの環境変数に設定します。Supabaseを読む場合は `_headers` の `connect-src` に実際のプロジェクトURLを追加します。導入前に権限テストを行います。
+接続未設定時のみ、このブラウザのlocalStorage下書きで画面を試せます。公開ボタンと写真アップロードは使用不可。接続済みの場合、通信エラーを古い静的データで隠さずエラー表示します。
 
-## チケット / Stripe / QR
+全サイトはルート配信を前提とします。CSPのconnect-srcは実際のSupabaseプロジェクトのみに限定。公開ページは公開テーブルのみ読み取ります。管理画面はnoindexです。
 
-初期値は `ticket.url: null` でComing Soonモーダル。既存チケットサイトのHTTPS URLを設定すると、ヘッダーとNEXT LIVE両方が同じURLへ遷移します。URL切替だけでは決済やQR機能を実装したことにはなりません。
+チケットは `ticket.url` から既存システムへ遷移する設計です。Stripe・QRの統合は今後の工程です。
 
-決済の作成、価格・在庫検証、Stripe秘密鍵、Webhook署名検証、QR発券は既存サーバー側に置きます。HPには秘密情報も決済確定ロジックも追加しません。将来NEXT LIVEを共用する場合は、公開可能なイベント情報だけを取得するadapterを追加します。
-
-## 問い合わせ
-
-初版はフォームURLまたはメールアプリへの導線。直接受付APIに進む場合は、サーバー側検証・レート制限・スパム対策・プライバシー案内と適切な保存期間を設計してから実装します。未接続時に「送信完了」を表示しません。
-
-## 管理画面の操作要件（確定事項）
-
-- 写真はファイルを選択、またはドラッグして追加。保存前にプレビューとトリミング位置を確認できる。
-- SNSはサービスごとのURL欄を設け、貼り付けて保存。ヘッダーとFOLLOW USへ共通反映する。
-- YouTubeは通常の動画URL・共有URL・Shorts URLを貼り付けられるようにし、動画IDの手入力は不要にする。保存前に埋め込みプレビューを表示する。
-- TOP、各セクションの見出し・日本語副見出し・本文・小さな補足文、ヘッダー項目名、ボタン文言、フッターも日本語ラベルの入力欄から編集可能にする。HTMLの直接編集は不要。
-- メンバー追加・非表示・並べ替え、プロフィールと今後の活動、写真・動画・ライブ情報も対象。
-- 「下書き保存」「プレビュー」「公開」を分け、未保存の変更と保存結果を明示する。公開操作には確認画面を用意する。
-- ログイン済み管理者だけ保存可能。公開データと下書きは権限で分離する。
-
-以上は次段階の実装要件。現在のフロントエンドには管理画面・アップロード・認証・全固定文言の管理データ化は未実装。SNSやYouTube投稿の自動同期は含まず、URLを貼って更新する方式。
+参考: https://supabase.com/docs/guides/database/postgres/row-level-security 、 https://supabase.com/docs/guides/storage/security/access-control

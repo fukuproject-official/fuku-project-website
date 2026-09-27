@@ -1,5 +1,15 @@
-/** Replace this adapter with a public, published-only Supabase query in phase 2. */
+import {DRAFT_KEY, getConfig, client, validateContent} from './cms.js';
+/** Public reads never query draft or administrator tables. */
 export async function loadContent() {
+  if (new URLSearchParams(location.search).get('preview') === '1') {
+    const draft = sessionStorage.getItem(DRAFT_KEY);
+    if (draft) return validateContent(JSON.parse(draft));
+  }
+  const config = await getConfig();
+  if (config.url) {
+    const rows = await client(config)('/rest/v1/fuku_website_public?id=eq.main&select=content');
+    if (rows.length) return validateContent(rows[0].content);
+  }
   const response = await fetch(new URL('../data/site.json', import.meta.url));
   if (!response.ok) throw new Error(`Content unavailable: ${response.status}`);
   const content = await response.json();

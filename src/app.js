@@ -5,6 +5,8 @@ const text = (selector, value) => { $(selector).textContent = value || ''; };
 const el = (tag, className, value) => { const node = document.createElement(tag); if (className) node.className = className; if (value !== undefined) node.textContent = value; return node; };
 const image = (src, alt, lazy = true) => { const node = el('img'); node.src = imageUrl(src); node.alt = alt; node.width = 500; node.height = 650; node.decoding = 'async'; if (lazy) node.loading = 'lazy'; return node; };
 const externalLink = (label, url) => { const node = el('a', '', label); node.href = url; node.target = '_blank'; node.rel = 'noopener noreferrer'; return node; };
+let uiCopy = {};
+const copy = (key, fallback) => uiCopy[key] ?? fallback;
 const modal = $('#modal');
 let modalTrigger;
 function openModal(content) {
@@ -66,12 +68,12 @@ function socialControl(key, url, icon = false) {
 }
 function renderMember(member) {
   const content = el('div', 'modal-member');
-  content.append(image(member.image, member.imageAlt));
+  const portrait = image(member.image, member.imageAlt); portrait.style.objectPosition = member.imagePosition || "50% 50%"; content.append(portrait);
   const details = el('div');
-  details.append(el('p', 'eyebrow', 'MEMBER'));
+  details.append(el('p', 'eyebrow', copy('memberKicker', 'MEMBER')));
   const heading = el('h2', '', member.name); heading.id = 'modal-title';
-  details.append(heading, el('p', 'micro', member.part), el('h3', '', 'PROFILE'), el('p', '', member.bio));
-  details.append(el('h3', '', 'UPCOMING / 今後の活動'));
+  details.append(heading, el('p', 'micro', member.part), el('h3', '', copy('profileHeading', 'PROFILE')), el('p', '', member.bio));
+  details.append(el('h3', '', copy('upcomingHeading', 'UPCOMING / 今後の活動')));
   if (member.upcomingActivities.length) {
     const list = el('ul');
     member.upcomingActivities.forEach(activity => {
@@ -81,11 +83,11 @@ function renderMember(member) {
       if (activity.description) item.append(el('p', '', activity.description));
       list.append(item);
     }); details.append(list);
-  } else details.append(el('p', '', '今後の活動は、決まり次第お知らせします。'));
-  details.append(el('h3', '', 'FOLLOW / SNS'));
+  } else details.append(el('p', '', copy('upcomingEmpty', '今後の活動は、決まり次第お知らせします。')));
+  details.append(el('h3', '', copy('memberSocialHeading', 'FOLLOW / SNS')));
   let count = 0;
   for (const [key, value] of Object.entries(member.socials)) { const url = safeUrl(value); if (url) { details.append(externalLink((socialLabels[key] || key) + '', url)); count++; } }
-  if (!count) details.append(el('p', '', 'SNSリンクは公開準備中です。'));
+  if (!count) details.append(el('p', '', copy('memberSocialEmpty', 'SNSリンクは公開準備中です。')));
   content.append(details); openModal(content);
 }
 function setupMotion() {
@@ -114,7 +116,24 @@ function setupMotion() {
 }
 async function init() {
   const content = await loadContent();
+  for (const [id, entry] of Object.entries(content.copy || {})) {
+    const target = document.querySelector(`[data-copy-id="${CSS.escape(id)}"]`);
+    if (!target) continue;
+    const texts = [...target.childNodes].filter(n => n.nodeType === Node.TEXT_NODE);
+    for (const [index,value] of Object.entries(entry.values)) if (texts[Number(index)]) texts[Number(index)].textContent = value ?? '';
+  }
+  if (new URLSearchParams(location.search).get('preview') === '1') {
+    const banner = el('div', 'preview-banner', '下書きプレビュー — 公開サイトには反映されていません');
+    document.body.append(banner);
+  }
+  uiCopy = content.ui || {};
   const { site, about, mind } = content;
+  document.title = `${site.name} | ${site.englishName}`;
+  $('meta[name="description"]').content = site.description || '';
+  $('.hero-note').hidden = !site.draftCopy;
+  $('#hero-image').style.objectPosition = site.heroPosition || '50% 50%';
+  $('#about-image').style.objectPosition = about.imagePosition || '50% 50%';
+  $('#mind-image').style.objectPosition = mind.imagePosition || '50% 50%';
   const members = visibleMembers(content.members);
   $('#hero-image').src = imageUrl(site.heroImage);
   $('#hero-image').alt = site.heroImageAlt;
@@ -127,20 +146,20 @@ async function init() {
   $('#mind-image').src = imageUrl(mind.image);
   members.forEach(member => {
     const card = el('button', 'member-card reveal'); card.setAttribute('aria-label', `${member.name}のプロフィールを開く`);
-    const photo = el('span', 'member-photo'); photo.append(image(member.image, member.imageAlt), el('span', 'member-overlay', 'VIEW PROFILE'));
+    const photo = el('span', 'member-photo'); const portrait = image(member.image, member.imageAlt); portrait.style.objectPosition = member.imagePosition || '50% 50%'; photo.append(portrait, el('span', 'member-overlay', copy('profileButton', 'VIEW PROFILE')));
     const name = el('span', 'member-name', member.name);
     card.append(photo, name, el('span', 'member-part', member.part)); card.addEventListener('click', () => renderMember(member)); $('#member-grid').append(card);
   });
-  if (!members.length) $('#member-grid').append(el('p', 'body-copy', 'メンバー情報は準備中です。'));
+  if (!members.length) $('#member-grid').append(el('p', 'body-copy', copy('membersEmpty', 'メンバー情報は準備中です。')));
   content.activity.forEach((activity, i) => {
     const article = el('article', 'activity-card reveal');
-    const photo = el('div', 'activity-photo'); photo.append(image(activity.image, `${activity.category}の写真掲載予定`));
+    const photo = el('div', 'activity-photo'); const activityImage = image(activity.image, activity.category); activityImage.style.objectPosition = activity.imagePosition || "50% 50%"; photo.append(activityImage);
     article.append(photo, el('h3', '', activity.category), el('p', 'micro', `0${i + 1} / FUKU PROJECT`), el('h4', '', activity.title), el('p', '', activity.body), el('p', 'status', activity.status)); $('#activity-list').append(article);
   });
   content.gallery.forEach((item, i) => {
     const figure = el('figure', 'gallery-item'); const button = el('button');
-    button.setAttribute('aria-label', `${item.caption}の画像を拡大`); button.append(image(item.image, item.alt));
-    button.addEventListener('click', () => { const body = el('div', 'modal-gallery'); const title = el('h2', '', item.caption); title.id = 'modal-title'; body.append(image(item.image, item.alt), title); if (item.placeholder) body.append(el('p', 'micro', '実際の活動写真は近日公開予定です。')); openModal(body); });
+    button.setAttribute('aria-label', `${item.caption}の画像を拡大`); const galleryImage = image(item.image, item.alt); galleryImage.style.objectPosition = item.imagePosition || "50% 50%"; button.append(galleryImage);
+    button.addEventListener('click', () => { const body = el('div', 'modal-gallery'); const title = el('h2', '', item.caption); title.id = 'modal-title'; body.append(image(item.image, item.alt), title); if (item.placeholder) body.append(el('p', 'micro', copy('galleryPlaceholder', '実際の活動写真は近日公開予定です。'))); openModal(body); });
     const caption = el('figcaption', '', item.caption); caption.append(el('span', '', String(i + 1).padStart(2, '0'))); figure.append(button, caption); $('#gallery-track').append(figure);
   });
   const track = $('#gallery-track');
@@ -156,13 +175,14 @@ async function init() {
   $$('[data-ticket]').forEach(button => button.addEventListener('click', () => {
     const url = safeUrl(content.ticket.url);
     if (url) window.location.assign(url);
-    else messageModal('TICKET', 'COMING SOON...', 'チケット販売ページは現在準備中です。\n公開まで、もうしばらくお待ちください。');
+    else messageModal('TICKET', 'COMING SOON...', copy('ticketPreparing', 'チケット販売ページは現在準備中です。\n公開まで、もうしばらくお待ちください。'));
   }));
   const videoSrc = youtubeEmbed(content.youtube.videoId);
   $('#video-container > img').src = imageUrl(content.youtube.poster);
-  if (videoSrc) { text('#play-video strong', 'PLAY FILM'); text('#play-video small', content.youtube.title); $('#play-video').setAttribute('aria-label', `${content.youtube.title}を再生`); }
+  $('#video-container > img').style.objectPosition = content.youtube.imagePosition || '50% 50%';
+  if (videoSrc) { text('#play-video strong', copy('playButton', 'PLAY FILM')); text('#play-video small', content.youtube.title); $('#play-video').setAttribute('aria-label', `${content.youtube.title}を再生`); }
   $('#play-video').addEventListener('click', () => {
-    if (!videoSrc) return messageModal('YOUTUBE / LIVE FILM', 'COMING SOON', 'ライブ映像は近日公開予定です。');
+    if (!videoSrc) return messageModal('YOUTUBE / LIVE FILM', 'COMING SOON', copy('videoPreparing', 'ライブ映像は近日公開予定です。'));
     const iframe = el('iframe'); iframe.title = content.youtube.title; iframe.src = videoSrc; iframe.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen'; iframe.allowFullscreen = true; iframe.referrerPolicy = 'strict-origin-when-cross-origin'; $('#video-container').replaceChildren(iframe); iframe.focus();
   });
   if (content.nextLive.title) text('#live-title', content.nextLive.title);
@@ -176,14 +196,14 @@ async function init() {
     $('#external-contact').hidden = false;
     $('#external-contact').href = externalForm;
     $('#offer-form').hidden = true;
-    text('#contact-status', '専用のお問い合わせフォームで受け付けています。');
+    text('#contact-status', copy('externalFormReady', '専用のお問い合わせフォームで受け付けています。'));
   } else if (mailAvailable) {
     $('#contact-button').disabled = false;
-    text('#contact-button', 'メールを作成する');
-    text('#form-help', '入力内容を入れたメールアプリが開きます。内容を確認して送信してください。');
-    text('#contact-status', '出演・企画・協賛など、お気軽にご相談ください。');
+    text('#contact-button', copy('composeEmail', 'メールを作成する'));
+    text('#form-help', copy('emailHelp', '入力内容を入れたメールアプリが開きます。内容を確認して送信してください。'));
+    text('#contact-status', copy('contactReady', '出演・企画・協賛など、お気軽にご相談ください。'));
   } else {
-    text('#contact-status', 'お問い合わせの受付は準備中です。');
+    text('#contact-status', copy('contactPreparing', 'お問い合わせの受付は準備中です。'));
   }
   $('#offer-form').addEventListener('submit', event => {
     event.preventDefault();

@@ -40,12 +40,12 @@ npm run preview
 
 ## Cloudflare Pagesへ公開する際の設定
 
-GitHub連携時のビルドコマンドは `npm run build`、出力先は `dist`、Node.jsは22以上。フレームワークは不要です。ビルド済みZIPの中身は静的ファイルとしても配信できます。本作業ではCloudflareへの接続・公開は行っていません。
+GitHub連携時のビルドコマンドは `npm run build`、出力先は `dist`、Node.jsは22以上。フレームワークは不要です。ビルド済みZIPの中身は静的ファイルとしても配信できます。Cloudflare Pagesで公開済み: https://fuku-project-website.pages.dev/ 。mainの更新から自動デプロイされます。
 
-`_headers` はCloudflare配信用のセキュリティヘッダーです。他の配信先では同等の設定を適用してください。サブディレクトリ配信にも通常ページの相対パスは対応します（404の戻り先は必要に応じて変更）。
+`_headers` はCloudflare配信用のセキュリティヘッダーです。他の配信先では同等の設定を適用してください。管理画面を含め、ルート配信を前提とします。
 
-## 将来の管理画面・チケット連携
+## 管理画面・チケット連携
 
-[接続設計](docs/INTEGRATION.md)を参照。Supabase・`/admin`・Stripe決済・QR発券は初版の対象外です。公開データの読込は `src/content.js` に分離され、既存決済システムの修正なしでリンク接続できます。
+`/admin/` から文章・写真・メンバー・SNS・YouTube・ライブ情報を編集できます。[操作ガイド](docs/ADMIN.md)と[接続設計](docs/INTEGRATION.md)を参照してください。公開内容はSupabaseから取得し、下書き保存と公開を分離しています。`data/site.json` は初期データです。通常の更新は管理画面で行います。
 
-改訂版ではTOPを1枚の画像、ABOUTを全幅画像とグラデーション上の白文字へ変更。游ゴシックを優先し、矢印・星・メンバー番号・斜め配置を外しています。
+Stripe決済・QR発券の組み込みは今後の工程です。現状はチケットURLを設定して既存システムにリンクできます。
