@@ -1,0 +1,439 @@
+{
+  "site": [
+    {
+      "id": "text-18",
+      "label": "ヘッダーロゴ",
+      "defaults": [
+        "FUKU",
+        "PROJECT"
+      ]
+    },
+    {
+      "id": "text-20",
+      "label": "ロゴ下の説明",
+      "defaults": [
+        "SOUND & CONNECTION"
+      ]
+    },
+    {
+      "id": "text-22",
+      "label": "メニュー：ABOUT",
+      "defaults": [
+        "ABOUT"
+      ]
+    },
+    {
+      "id": "text-23",
+      "label": "メニュー：MIND",
+      "defaults": [
+        "MIND"
+      ]
+    },
+    {
+      "id": "text-24",
+      "label": "メニュー：MEMBERS",
+      "defaults": [
+        "MEMBERS"
+      ]
+    },
+    {
+      "id": "text-26",
+      "label": "メニュー：GALLERY",
+      "defaults": [
+        "GALLERY"
+      ]
+    },
+    {
+      "id": "text-27",
+      "label": "メニュー：MOVIE",
+      "defaults": [
+        "MOVIE"
+      ]
+    },
+    {
+      "id": "text-28",
+      "label": "メニュー：LIVE",
+      "defaults": [
+        "LIVE"
+      ]
+    },
+    {
+      "id": "text-29",
+      "label": "メニュー：SNS",
+      "defaults": [
+        "SNS"
+      ]
+    },
+    {
+      "id": "text-35",
+      "label": "OFFERボタン",
+      "defaults": [
+        "OFFER"
+      ]
+    },
+    {
+      "id": "text-36",
+      "label": "TICKETボタン",
+      "defaults": [
+        "TICKET"
+      ]
+    },
+    {
+      "id": "text-40",
+      "label": "TOP上部の案内",
+      "defaults": [
+        "福プロジェクト / OFFICIAL WEBSITE"
+      ]
+    },
+    {
+      "id": "text-41",
+      "label": "TOP地域名",
+      "defaults": [
+        "KAGOSHIMA, JAPAN"
+      ]
+    },
+    {
+      "id": "text-45",
+      "label": "TOP英語の補足",
+      "defaults": [
+        "MUSIC BRINGS US TOGETHER."
+      ]
+    },
+    {
+      "id": "text-46",
+      "label": "TOP大見出し1",
+      "defaults": [
+        "FUKU"
+      ]
+    },
+    {
+      "id": "text-48",
+      "label": "TOP大見出し2",
+      "defaults": [
+        "PROJECT"
+      ]
+    },
+    {
+      "id": "text-54",
+      "label": "スクロールの案内",
+      "defaults": [
+        "SCROLL TO DISCOVER "
+      ]
+    },
+    {
+      "id": "text-55",
+      "label": "写真・プロフィール準備中の案内",
+      "defaults": [
+        "VISUAL PREVIEW — 写真・プロフィールは順次公開予定"
+      ]
+    },
+    {
+      "id": "text-169",
+      "label": "フッターロゴ",
+      "defaults": [
+        "FUKU PROJECT"
+      ]
+    },
+    {
+      "id": "text-171",
+      "label": "フッター名称",
+      "defaults": [
+        "福プロジェクト"
+      ]
+    },
+    {
+      "id": "text-172",
+      "label": "フッター補足",
+      "defaults": [
+        "MUSIC / LIVE / COMMUNITY / KAGOSHIMA"
+      ]
+    },
+    {
+      "id": "text-173",
+      "label": "ページ先頭ボタン",
+      "defaults": [
+        "BACK TO TOP "
+      ]
+    },
+    {
+      "id": "text-178",
+      "label": "詳細画面のロゴ",
+      "defaults": [
+        "FUKU PROJECT"
+      ]
+    },
+    {
+      "id": "text-179",
+      "label": "閉じるボタン",
+      "defaults": [
+        "CLOSE ×"
+      ]
+    }
+  ],
+  "about": [
+    {
+      "id": "text-59",
+      "label": "見出し1（英語）",
+      "defaults": [
+        "ABOUT"
+      ]
+    },
+    {
+      "id": "text-64",
+      "label": "写真内の英語の補足",
+      "defaults": [
+        "DIFFERENT ROOTS. SAME GROOVE."
+      ]
+    }
+  ],
+  "mind": [
+    {
+      "id": "text-70",
+      "label": "見出し1（英語）",
+      "defaults": [
+        "OUR MIND"
+      ]
+    },
+    {
+      "id": "text-75",
+      "label": "写真内の補足",
+      "defaults": [
+        "BEYOND THE STAGE."
+      ]
+    },
+    {
+      "id": "text-78",
+      "label": "本文横の補足",
+      "defaults": [
+        "SOUND.",
+        "PEOPLE.",
+        "CONNECTION."
+      ]
+    }
+  ],
+  "members": [
+    {
+      "id": "text-84",
+      "label": "見出し1（英語）",
+      "defaults": [
+        "MEMBERS"
+      ]
+    },
+    {
+      "id": "text-85",
+      "label": "見出し2（日本語）",
+      "defaults": [
+        "それぞれの音が、ここで出会う。"
+      ]
+    },
+    {
+      "id": "text-86",
+      "label": "見出し横の説明",
+      "defaults": [
+        "MEET OUR MEMBERS.",
+        "プロフィール。 "
+      ]
+    },
+    {
+      "id": "text-89",
+      "label": "プロフィール準備中の案内",
+      "defaults": [
+        "PORTRAITS & PROFILES — COMING SOON"
+      ]
+    }
+  ],
+  "gallery": [
+    {
+      "id": "text-100",
+      "label": "見出し1（英語）",
+      "defaults": [
+        "GALLERY"
+      ]
+    },
+    {
+      "id": "text-101",
+      "label": "見出し2（日本語）",
+      "defaults": [
+        "音が聞こえる、その瞬間。"
+      ]
+    }
+  ],
+  "youtube": [
+    {
+      "id": "text-112",
+      "label": "見出し1（英語）",
+      "defaults": [
+        "WATCH US"
+      ]
+    },
+    {
+      "id": "text-113",
+      "label": "見出し2（日本語）",
+      "defaults": [
+        "画面越しにも、伝わる熱を。"
+      ]
+    },
+    {
+      "id": "text-114",
+      "label": "見出し横の補足",
+      "defaults": [
+        "YOUTUBE / LIVE FILM"
+      ]
+    },
+    {
+      "id": "text-119",
+      "label": "動画未登録時のボタン",
+      "defaults": [
+        "COMING SOON"
+      ]
+    },
+    {
+      "id": "text-120",
+      "label": "動画未登録時の説明",
+      "defaults": [
+        "ライブ映像は近日公開予定です"
+      ]
+    }
+  ],
+  "nextLive": [
+    {
+      "id": "text-124",
+      "label": "見出し1（英語）",
+      "defaults": [
+        "NEXT LIVE"
+      ]
+    },
+    {
+      "id": "text-125",
+      "label": "見出し2（日本語）",
+      "defaults": [
+        "次は、同じ場所で。"
+      ]
+    },
+    {
+      "id": "text-131",
+      "label": "TICKETボタン",
+      "defaults": [
+        "TICKET "
+      ]
+    }
+  ],
+  "socials": [
+    {
+      "id": "text-133",
+      "label": "見出し",
+      "defaults": [
+        "FOLLOW US."
+      ]
+    }
+  ],
+  "contact": [
+    {
+      "id": "text-138",
+      "label": "見出しの説明",
+      "defaults": [
+        "出演依頼・お問い合わせ"
+      ]
+    },
+    {
+      "id": "text-139",
+      "label": "大見出し",
+      "defaults": [
+        "LET’S MAKE",
+        "SOMETHING"
+      ]
+    },
+    {
+      "id": "text-142",
+      "label": "大見出し（最終行）",
+      "defaults": [
+        "TOGETHER."
+      ]
+    },
+    {
+      "id": "text-147",
+      "label": "外部フォームボタン",
+      "defaults": [
+        "お問い合わせフォームを開く"
+      ]
+    },
+    {
+      "id": "text-150",
+      "label": "お名前ラベル",
+      "defaults": [
+        "お名前 "
+      ]
+    },
+    {
+      "id": "text-151",
+      "label": "お名前の必須表示",
+      "defaults": [
+        "必須"
+      ]
+    },
+    {
+      "id": "text-153",
+      "label": "団体名ラベル",
+      "defaults": [
+        "団体・会社名"
+      ]
+    },
+    {
+      "id": "text-155",
+      "label": "メールラベル",
+      "defaults": [
+        "メールアドレス "
+      ]
+    },
+    {
+      "id": "text-156",
+      "label": "メールの必須表示",
+      "defaults": [
+        "必須"
+      ]
+    },
+    {
+      "id": "text-159",
+      "label": "相談内容ラベル",
+      "defaults": [
+        "ご相談内容"
+      ]
+    },
+    {
+      "id": "text-161",
+      "label": "予定日ラベル",
+      "defaults": [
+        "開催予定日"
+      ]
+    },
+    {
+      "id": "text-163",
+      "label": "内容ラベル",
+      "defaults": [
+        "お問い合わせ内容 "
+      ]
+    },
+    {
+      "id": "text-164",
+      "label": "内容の必須表示",
+      "defaults": [
+        "必須"
+      ]
+    },
+    {
+      "id": "text-166",
+      "label": "受付準備中の説明",
+      "defaults": [
+        "受付開始まで入力内容は送信・保存されません。"
+      ]
+    },
+    {
+      "id": "text-167",
+      "label": "受付準備中のボタン",
+      "defaults": [
+        "受付準備中"
+      ]
+    }
+  ],
+  "ticket": []
+}
