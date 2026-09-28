@@ -26,7 +26,7 @@ async function upload(file){
  pending++;$('#publish').disabled=true;
  try{
  // Re-encode photos to remove metadata and keep display assets small.
- const bitmap=await createImageBitmap(file);const scale=Math.min(1,2400/Math.max(bitmap.width,bitmap.height));const canvas=document.createElement('canvas');canvas.width=Math.round(bitmap.width*scale);canvas.height=Math.round(bitmap.height*scale);canvas.getContext('2d').drawImage(bitmap,0,0,canvas.width,canvas.height);bitmap.close();
+ const bitmap=await createImageBitmap(file).catch(()=>{throw new Error('写真を読み込めませんでした。別の写真か、JPEG・PNG・WebP形式で選び直してください。');});const scale=Math.min(1,2400/Math.max(bitmap.width,bitmap.height));const canvas=document.createElement('canvas');canvas.width=Math.round(bitmap.width*scale);canvas.height=Math.round(bitmap.height*scale);canvas.getContext('2d').drawImage(bitmap,0,0,canvas.width,canvas.height);bitmap.close();
  const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/webp',.87));if(!blob)throw new Error('写真を読み込めませんでした。');
  const path=`photos/${crypto.randomUUID()}.webp`;
  await api(`/storage/v1/object/fuku-website-images/${path}`,{method:'POST',body:blob,headers:{'Content-Type':'image/webp','x-upsert':'false'}});
@@ -39,12 +39,39 @@ function photo(parent,obj,key,label){
  const url=node('label','または画像URL');const u=node('input');u.value=obj[key]||'';u.oninput=()=>{obj[key]=u.value;img.hidden=!u.value;if(u.value)img.src=imageUrl(u.value);changed();};url.append(u);section.append(url);
  const position=node('label','写真の表示位置');const select=node('select');for(const [value,title] of [['50% 50%','中央'],['50% 0%','上'],['50% 100%','下'],['0% 50%','左'],['100% 50%','右']]){const o=node('option',title);o.value=value;select.append(o);}select.value=obj[posKey]||'50% 50%';select.onchange=()=>{obj[posKey]=select.value;img.style.objectPosition=select.value;changed();};position.append(select);if(current!=='nextLive')section.append(position);section.append(button('写真を外す',()=>{obj[key]='';changed();render();}));parent.append(section);
 }
+function albumPhotos(parent,album){
+ parent.append(node('p','① 写真をまとめて選ぶ → ② アルバム名を入力 → ③ 下書き保存・プレビュー・公開。先頭の写真が表紙になります。','hint'));
+ const picker=node('label','＋ 写真をまとめて追加', 'album-upload');const input=node('input');input.type='file';input.multiple=true;input.accept='image/jpeg,image/png,image/webp';picker.append(input);parent.append(picker,node('p','何枚でも一緒に選べます。JPEG・PNG・WebP、1枚8MBまで。','hint'));
+ const progress=node('p','','album-progress');progress.setAttribute('role','status');parent.append(progress);
+ input.onchange=async()=>{
+  const files=[...input.files];input.value='';if(!files.length)return;
+  pending++;$('#editor').inert=true;$('#tabs').inert=true;$('#save').disabled=true;$('#preview').disabled=true;$('#publish').disabled=true;
+  let count=0;const failures=[];
+  try{for(const [i,file] of files.entries()){
+   progress.textContent=`写真を追加しています… ${i+1} / ${files.length}枚`;notify(progress.textContent);
+   try{const url=await upload(file);album.photos.push({id:crypto.randomUUID(),image:url,alt:''});count++;changed();}
+   catch(e){failures.push(`${file.name}：${e.message}`);}
+  }}finally{
+   pending--;$('#editor').inert=false;$('#tabs').inert=false;$('#save').disabled=false;$('#preview').disabled=false;$('#publish').disabled=!config.url||pending>0;render();
+   notify(`${count}枚の写真を追加しました。${failures.length?'追加できなかった写真があります。画面の案内をご確認ください。':'下書き保存・プレビューで確認できます。'}`);
+   if(failures.length){const notice=node('div',undefined,'upload-errors');notice.setAttribute('role','alert');notice.append(node('h3','追加できなかった写真'));for(const reason of failures)notice.append(node('p',reason));notice.append(node('p','追加済みの写真は残っています。上記の写真だけ選び直してください。'));$('#editor').prepend(notice);}
+  }
+ };
+ const grid=node('div',undefined,'admin-album-grid');
+ album.photos.forEach((photo,i)=>{
+  const card=node('div',undefined,'admin-album-photo');const img=node('img');if(photo.image)img.src=imageUrl(photo.image);img.alt=photo.alt||`写真 ${i+1}`;card.append(img,node('p',i===0?'表紙':`写真 ${i+1}`));
+  const cover=button('表紙にする',()=>{album.photos.splice(i,1);album.photos.unshift(photo);changed();render();});cover.disabled=i===0;card.append(cover);
+  card.append(button('外す',()=>{if(confirm('この写真をアルバムから外しますか？公開するまでは公開サイトに影響しません。')){album.photos.splice(i,1);changed();render();}}));
+  const detail=node('details');detail.append(node('summary','写真の説明・表示位置'));field(detail,photo,'alt');const position=node('label','表示位置');const select=node('select');for(const [value,title]of [['50% 50%','中央'],['50% 0%','上'],['50% 100%','下']]){const option=node('option',title);option.value=value;select.append(option);}select.value=photo.imagePosition||'50% 50%';select.onchange=()=>{photo.imagePosition=select.value;changed();};position.append(select);detail.append(position);card.append(detail);grid.append(card);
+ });parent.append(grid);
+}
 function collection(parent,obj,key){
- const arr=obj[key];parent.append(node('p',key==='members'?'人数に制限はありません。「表示する」を外すと、内容を残したまま非表示にできます。':'項目の追加・並べ替えができます。','hint'));
+ if(key==='photos'){albumPhotos(parent,obj);return;}
+ const arr=obj[key];parent.append(node('p',key==='members'?'人数に制限はありません。「表示する」を外すと、内容を残したまま非表示にできます。':key==='albums'?'アルバムを作り、写真をまとめて追加してください。写真がないアルバムは、お客様には表示されません。':'項目の追加・並べ替えができます。','hint'));
  arr.forEach((item,i)=>{const card=node('details',undefined,'card');const summary=node('summary',`${i+1}. ${item.name||item.title||item.caption||'新しい項目'}${item.published===false?'（非表示）':''}`);card.dataset.itemId=item.id||String(i);card.append(summary);
- for(const k of Object.keys(item))if(!k.endsWith('Position'))field(card,item,k);
+ for(const k of Object.keys(item))if(!k.endsWith('Position'))field(card,item,k,key==='albums'&&k==='title'?'アルバム名':undefined);
  const actions=node('div',undefined,'actions');for(const [name,offset] of [['上へ',-1],['下へ',1]]){const b=button(name,()=>{[arr[i],arr[i+offset]]=[arr[i+offset],arr[i]];arr.forEach((x,n)=>{if(key==='members')x.sortOrder=(n+1)*10;});changed();render();});b.disabled=i+offset<0||i+offset>=arr.length;actions.append(b);}actions.append(button('削除',()=>{if(confirm('この項目を下書きから削除しますか？公開するまでは公開サイトに影響しません。')){arr.splice(i,1);changed();render();}}));card.append(actions);parent.append(card);});
- parent.append(button('＋ 追加する',()=>{const id=crypto.randomUUID();let item;
+ parent.append(button(key==='albums'?'＋ アルバムを作る':'＋ 追加する',()=>{const id=crypto.randomUUID();let item;
  if(key==='members')item={id,name:'新しいメンバー',part:'',image:'',imageAlt:'',bio:'',socials:{instagram:null,x:null,youtube:null,website:null},upcomingActivities:[],published:false,placeholder:false,sortOrder:(arr.length+1)*10};
  else if(key==='albums')item={id,title:'新しいLIVEアルバム',date:'',photos:[]};
  else if(key==='photos')item={id,image:'',alt:''};
