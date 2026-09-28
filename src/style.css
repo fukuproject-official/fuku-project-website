@@ -100,3 +100,21 @@ body{line-break:strict;word-break:normal;overflow-wrap:break-word}
 @media(max-width:600px){.album-list{grid-template-columns:repeat(2,minmax(0,1fr));gap:28px 16px}.album-name{font-size:13px}}
 @media(prefers-reduced-motion:reduce){.album-cover img{transition:none}}
 .gallery{padding-right:var(--pad)}.gallery .section-heading{margin-right:0}
+
+/* Keep the heading, artwork and event details in one compact live announcement. */
+.next-live{grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-areas:"heading image" "info image";grid-template-rows:auto 1fr;column-gap:clamp(28px,5vw,80px);row-gap:28px;align-items:start}
+.next-live-head{grid-area:heading;min-width:0}
+.next-live-info{grid-area:info;min-width:0}
+.next-live .live-image{grid-area:image;width:100%;height:auto;max-height:640px;object-fit:contain;margin:0;align-self:start}
+.next-live .live-status{font-family:var(--sans);font-size:clamp(24px,2.5vw,38px);font-weight:700;line-height:1.5;letter-spacing:.02em;overflow-wrap:anywhere;line-break:strict;word-break:normal;margin-bottom:22px;white-space:pre-line}
+.next-live #live-meta{margin-top:18px;white-space:pre-line;line-height:2}
+.next-live .next-live-info .button{max-width:360px}
+.next-live:not(:has(.live-image:not([hidden]))){grid-template-areas:"heading info"}
+@media(max-width:760px){
+ .next-live{grid-template-columns:minmax(0,1fr);grid-template-areas:"heading" "image" "info";gap:24px}
+ .next-live:not(:has(.live-image:not([hidden]))){grid-template-areas:"heading" "info"}
+ .next-live h2{margin-top:0}
+ .next-live .live-image{max-height:70svh}
+ .next-live .live-status{font-size:24px;line-height:1.55}
+ .next-live .next-live-info .button{max-width:none}
+}
