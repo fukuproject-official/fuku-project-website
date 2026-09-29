@@ -1,4 +1,4 @@
-import {DRAFT_KEY, normalizeContent, validateContent, youtubeId, getConfig, client} from '/src/cms.js';
+import {sectionOrder, DRAFT_KEY, normalizeContent, validateContent, youtubeId, getConfig, client} from '/src/cms.js';
 import {imageUrl} from '/src/content.js';
 const $=s=>document.querySelector(s);
 const node=(tag,text,cls)=>{const n=document.createElement(tag);if(text!==undefined)n.textContent=text;if(cls)n.className=cls;return n;};
@@ -9,6 +9,7 @@ function notify(t){$('#status').textContent=t;}
 function changed(){dirty=true;$('#state').textContent='未保存の変更があります';}
 function button(text,fn){const b=node('button',text);b.type='button';b.onclick=fn;return b;}
 function field(parent,obj,key,label=labels[key]||key){
+ if(key==='categories'){categoryEditor(parent,obj);return;}
  const v=obj[key]; if(['x','upcomingActivities','placeholder'].includes(key))return; if(key==='id'||key==='sortOrder'||key==='schemaVersion')return;
  if(['image','heroImage','poster'].includes(key)){photo(parent,obj,key,label);return;}
  if(Array.isArray(v)&&!['heroCopy','categories'].includes(key)){parent.append(node('h3',label));collection(parent,obj,key);return;}
@@ -19,6 +20,14 @@ function field(parent,obj,key,label=labels[key]||key){
  if(key==='videoId'){input.value=v?`https://www.youtube.com/watch?v=${v}`:'';input.oninput=()=>{const id=youtubeId(input.value.trim());input.setCustomValidity(input.value&&!id?'YouTubeの動画URLを確認してください。':'');obj[key]=id||input.value||null;changed();};input.onchange=()=>{if(input.reportValidity())render();};}
  wrap.append(input);}
  parent.append(wrap);
+}
+function categoryEditor(parent,obj){
+ const section=node('section');section.append(node('h3','ご相談の種類'),node('p','お客様がお問い合わせ時に選ぶ項目です。追加・削除・順番変更は「公開する」で反映されます。','hint'));
+ obj.categories.forEach((value,i)=>{
+  const row=node('div',undefined,'category-row');const label=node('label',`種類 ${i+1}`),input=node('input');input.value=value;input.oninput=()=>{obj.categories[i]=input.value;changed();};label.append(input);row.append(label);
+  for(const [text,delta]of [['↑',-1],['↓',1]]){const b=button(text,()=>{[obj.categories[i],obj.categories[i+delta]]=[obj.categories[i+delta],obj.categories[i]];changed();render();});b.setAttribute('aria-label',`種類 ${i+1}を${delta<0?'上':'下'}へ`);b.disabled=i+delta<0||i+delta>=obj.categories.length;row.append(b);}
+  row.append(button('削除',()=>{obj.categories.splice(i,1);changed();render();}));section.append(row);
+ });section.append(button('＋ ご相談の種類を追加',()=>{obj.categories.push('新しいご相談');changed();render();}));parent.append(section);
 }
 async function upload(file){
  if(!config.url)throw new Error('写真アップロードはSupabase接続後に使えます。現在は画像URLでプレビューできます。');
@@ -80,6 +89,30 @@ function collection(parent,obj,key){
  else item={title:'新しい予定',date:'',description:'',url:null};arr.push(item);changed();render();const last=$('#editor').querySelectorAll('.card');if(last.length){let d=last[last.length-1];while(d){d.open=true;d=d.parentElement.closest('details');}}
  }));
 }
+function moveSection(key,target){
+ if(pending||$('#save').disabled)return;
+ const order=sectionOrder(content.sectionOrder),from=order.indexOf(key),to=order.indexOf(target);
+ if(from<0||to<0||from===to)return;
+ order.splice(from,1);order.splice(to,0,key);content.sectionOrder=order;changed();renderTabs();render();
+ notify('表示順を変更しました。プレビューで確認し、「公開する」でHPに反映できます。');
+}
+function renderTabs(){
+ const tabs=$('#tabs');tabs.replaceChildren(node('p','⋮⋮ をつかんで順番を変更できます。上下ボタンでも操作できます。TOPとチケット設定は固定です。','hint'));
+ const order=sectionOrder(content.sectionOrder);
+ for(const key of ['site',...order,'ticket']){
+  const row=node('div',undefined,'section-tab-row');
+  const tab=button(sections[key],()=>{current=key;render();});tab.dataset.section=key;row.append(tab);
+  if(order.includes(key)){
+   const handle=button('⋮⋮',()=>{});handle.className='section-handle';handle.setAttribute('aria-label',sections[key]+'をつかんで移動');handle.draggable=true;
+   handle.ondragstart=e=>{e.dataTransfer.setData('text/plain',key);e.dataTransfer.effectAllowed='move';};
+   row.ondragover=e=>{e.preventDefault();row.classList.add('drop-target');};row.ondragleave=()=>row.classList.remove('drop-target');
+   row.ondrop=e=>{e.preventDefault();row.classList.remove('drop-target');moveSection(e.dataTransfer.getData('text/plain'),key);};row.prepend(handle);
+   const actions=node('div',undefined,'section-move');for(const [text,delta]of [['↑',-1],['↓',1]]){
+    const b=button(text,()=>{moveSection(key,order[order.indexOf(key)+delta]);$('#tabs').querySelector(`[data-section="${key}"]`).focus();});b.setAttribute('aria-label',sections[key]+(delta<0?'を上へ':'を下へ'));b.disabled=!order[order.indexOf(key)+delta];actions.append(b);
+   }row.append(actions);
+  }tabs.append(row);
+ }
+}
 function render(){
  const opened=[...$('#editor').querySelectorAll('details[open][data-item-id]')].map(d=>d.dataset.itemId);
  $('#editor').replaceChildren(node('h2',sections[current]));$('#tabs').querySelectorAll('button').forEach(b=>b.setAttribute('aria-current',b.dataset.section===current?'page':'false'));
@@ -98,7 +131,7 @@ async function start(){
  const initial=await fetch('/data/site.json').then(r=>r.json());
  if(config.url){const rows=await api('/rest/v1/fuku_website_drafts?id=eq.main&select=content,updated_at');if(rows.length){content=rows[0].content;revision=rows[0].updated_at;}else content=initial;}
  else {try{content=JSON.parse(localStorage.getItem(DRAFT_KEY))||initial;}catch{content=initial;}}
- normalizeContent(content);content.ui ||= initial.ui;content.albums ||= [];content.site.heroVideo ||= '';content.nextLive.image ||= '';content.nextLive.imageAlt ||= '';fieldGroups=await fetch('/data/editor-fields.json').then(r=>r.json()); validateContent(content);$('#login').hidden=true;$('#workspace').hidden=false;$('#logout').hidden=!config.url;$('#publish').disabled=!config.url;$('#connection').textContent=config.url?'下書きは管理者だけが見られます。「公開する」で公開サイトへ反映されます。':'接続準備中：編集とプレビューを試せます。下書きはこのブラウザだけに保存され、公開サイトには反映されません。';$('#state').textContent='編集を始められます';$('#tabs').replaceChildren();for(const [key,label]of Object.entries(sections)){const b=button(label,()=>{current=key;render();});b.dataset.section=key;$('#tabs').append(b);}render();
+ normalizeContent(content);content.ui ||= initial.ui;content.albums ||= [];content.site.heroVideo ||= '';content.nextLive.image ||= '';content.nextLive.imageAlt ||= '';fieldGroups=await fetch('/data/editor-fields.json').then(r=>r.json()); validateContent(content);$('#login').hidden=true;$('#workspace').hidden=false;$('#logout').hidden=!config.url;$('#publish').disabled=!config.url;$('#connection').textContent=config.url?'下書きは管理者だけが見られます。「公開する」で公開サイトへ反映されます。':'接続準備中：編集とプレビューを試せます。下書きはこのブラウザだけに保存され、公開サイトには反映されません。';$('#state').textContent='編集を始められます';renderTabs();render();
 }
 async function save(){
  validateContent(content);if(pending)throw new Error('写真のアップロード完了をお待ちください。');
