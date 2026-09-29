@@ -1,3 +1,5 @@
+export const SECTION_IDS={nextLive:'next-live',about:'about',mind:'mind',members:'members',albums:'gallery',youtube:'youtube',socials:'follow',contact:'contact'};
+export function sectionOrder(value){const keys=Object.keys(SECTION_IDS);return [...new Set([...(Array.isArray(value)?value:[]).filter(k=>keys.includes(k)),...keys])];}
 export const DRAFT_KEY = 'fuku-editor-draft-v1';
 export function youtubeId(value) {
   if (!value) return null;
@@ -12,6 +14,7 @@ export function youtubeId(value) {
   } catch { return null; }
 }
 export function normalizeContent(c) {
+ c.sectionOrder=sectionOrder(c.sectionOrder);
  c.albums ||= [];c.site.heroVideo ||= '';c.nextLive.image ||= '';c.nextLive.imageAlt ||= '';
  for(const id of ['text-20','text-89']){const item=c.copy?.[id];if(item&&Object.keys(item.values).length>1)item.values={'0':Object.values(item.values).join('')};}
  const old=c.copy?.['text-86']?.values;if(old)for(const k of Object.keys(old))old[k]=old[k].replace('プロフィールと今後の活動。','プロフィール。');
@@ -23,6 +26,7 @@ export function validateContent(c) {
   for (const name of ['site','about','mind','youtube','nextLive','socials','contact','ticket']) if (!c[name] || typeof c[name] !== 'object') throw new Error(`${name} のデータがありません。`);
   for (const name of ['activity','gallery']) if (!Array.isArray(c[name])) throw new Error(`${name} の一覧がありません。`);
   if (!Array.isArray(c.site.heroCopy) || !Array.isArray(c.contact.categories)) throw new Error('文章の形式が違います。');
+  if(c.contact.categories.some(v=>typeof v!=='string'||!v.trim()))throw new Error('ご相談の種類に空欄があります。名前を入力するか削除してください。');
   const ids = new Set();
   for (const m of c.members) {
     if (!m.id || ids.has(m.id) || !m.name || !Array.isArray(m.upcomingActivities) || !m.socials) throw new Error('メンバーの名前・ID・活動情報を確認してください。');

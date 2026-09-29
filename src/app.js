@@ -1,3 +1,4 @@
+import {SECTION_IDS, sectionOrder} from './cms.js';
 import { loadContent, visibleMembers, safeUrl, imageUrl, youtubeEmbed, contactMailto, offerMailto } from './content.js';
 const $ = (selector, root = document) => root.querySelector(selector);
 const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
@@ -111,6 +112,10 @@ function setupMotion() {
 }
 async function init() {
   const content = await loadContent();
+  for(const key of sectionOrder(content.sectionOrder)){
+    $('#main').append(document.getElementById(SECTION_IDS[key]));
+    const link=$(`#navigation a[href="#${SECTION_IDS[key]}"]`);if(link)$('#navigation').append(link);
+  }
   for (const [id, entry] of Object.entries(content.copy || {})) {
     const target = document.querySelector(`[data-copy-id="${CSS.escape(id)}"]`);
     if (!target) continue;
