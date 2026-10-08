@@ -1,11 +1,13 @@
 import {createAutosave} from './autosave.js';
 import {sectionOrder, DRAFT_KEY, normalizeContent, validateContent, youtubeId, getConfig, client} from '/src/cms.js';
-import {imageUrl} from '/src/content.js';
+import {imageUrl, safeUrl} from '/src/content.js';
 const $=s=>document.querySelector(s);
 const node=(tag,text,cls)=>{const n=document.createElement(tag);if(text!==undefined)n.textContent=text;if(cls)n.className=cls;return n;};
 let fieldGroups={}, content, config, api, token=null, dirty=false, revision=null, current='dashboard', pending=0;
 const sections={goods:'GOODS',faq:'Q&A',reception:'受付',design:'デザイン',staff:'スタッフ',site:'TOP・ヘッダー・フッター',nextLive:'NEXT LIVE',about:'ABOUT',mind:'OUR MIND',members:'MEMBERS・メンバー',albums:'GALLERY・LIVEアルバム',youtube:'YouTube',socials:'FOLLOW US・SNS',contact:'お問い合わせ',ticket:'チケット'};
 const labels={"memberKicker":"MEMBER","profileHeading":"PROFILE","upcomingHeading":"UPCOMING / 今後の活動","upcomingEmpty":"今後の活動は、決まり次第お知らせします。","memberSocialHeading":"FOLLOW / SNS","memberSocialEmpty":"SNSリンクは公開準備中です。","profileButton":"VIEW PROFILE","membersEmpty":"メンバー情報は準備中です。","galleryPlaceholder":"実際の活動写真は近日公開予定です。","ticketPreparing":"チケット販売ページは現在準備中です。 / 公開まで、もうしばらくお待ちください。","videoPreparing":"ライブ映像は近日公開予定です。","playButton":"PLAY FILM","externalFormReady":"専用のお問い合わせフォームで受け付けています。","composeEmail":"メールを作成する","emailHelp":"入力内容を入れたメールアプリが開きます。内容を確認して送信してください。","contactReady":"出演・企画・協賛など、お気軽にご相談ください。","contactPreparing":"お問い合わせの受付は準備中です。",name:'名前',englishName:'英語名',description:'説明文',heroCopy:'TOPのメッセージ（1行ずつ）',heroLabel:'TOPの補足文',draftCopy:'写真・プロフィール準備中の表示',heroImage:'TOP写真',heroImageAlt:'TOP写真の説明',heroVideo:'TOP動画URL（MP4・WebM／空欄なら写真）',photos:'アルバムの写真',title:'タイトル',lead:'写真内の見出し',body:'本文',image:'写真',imageAlt:'写真の説明',message:'メッセージ',part:'担当・肩書き',bio:'プロフィール',instagram:'Instagram URL',x:'X URL',youtube:'YouTube URL',website:'Webサイト URL',placeholder:'準備中の写真・情報',published:'公開サイトに表示する',upcomingActivities:'今後の活動',socials:'SNS',category:'分類名',status:'補足・公開状況',alt:'写真の説明',caption:'写真の見出し',videoId:'YouTube動画URL',poster:'動画のカバー写真',date:'日付',venue:'会場',email:'お問い合わせ先メール',formUrl:'外部フォームURL（設定するとメールフォームの代わりに表示）',categories:'ご相談の種類（1行ずつ）',url:'リンク先URL',heroPosition:'TOP写真の表示位置',imagePosition:'写真の表示位置'};
+function externalLink(label,url){const a=node('a',label,'external-action');a.href=url;a.target='_blank';a.rel='noopener noreferrer';return a;}
+function livePocketLinks(parent){const actions=node('div',undefined,'actions');actions.append(externalLink('LivePocketの管理画面を開く ↗','https://promoter.livepocket.jp/login/'));const url=safeUrl(content.ticket.url);if(url)actions.append(externalLink('お客様向けチケットページを見る ↗',url));parent.append(actions);}
 function notify(t){$('#status').textContent=t;}
 const saver=createAutosave({read:()=>content,canSave:()=>pending===0,write:async document=>{
  validateContent(document);
@@ -124,9 +126,9 @@ function moveSection(key,target){
 }
 function renderTabs(){
  const tabs=$('#tabs');tabs.replaceChildren();
- const items=[['dashboard','⌂ ダッシュボード'],['site','▧ TOP'],['nextLive','▣ LIVE'],['albums','▦ PHOTO・写真'],['members','♙ MEMBER'],['goods','◇ GOODS'],['faq','? Q&A'],['ticket','▤ チケット'],['reception','▥ 受付'],['contact','✉ メール・お問い合わせ'],['design','◐ デザイン'],['socials','⚙ サイト設定・SNS'],['staff','♧ スタッフ']];
+ const items=[['dashboard','⌂ ダッシュボード'],['site','▧ TOP'],['nextLive','▣ LIVE'],['albums','▦ PHOTO・写真'],['members','♙ MEMBER'],['goods','◇ GOODS'],['faq','? Q&A'],['ticket','▤ チケット'],['reception','▥ 受付・LivePocket'],['contact','✉ メール・お問い合わせ'],['design','◐ デザイン'],['socials','⚙ サイト設定・SNS'],['staff','♧ スタッフ']];
  for(const [key,title]of items){const tab=button(title,()=>openSection(key));tab.dataset.section=key;tabs.append(tab);}
- tabs.append(node('p','GOODS・Q&A・デザイン設定は開発予定。メール・決済・受付・スタッフ管理は未接続です。','hint'));
+ tabs.append(node('p','販売・受付はLivePocketを利用します。GOODS・Q&A・デザイン・メール受信・スタッフ設定は開発予定です。','hint'));
 }
 function orderEditor(target){
  target.append(node('p','つかんで移動するか、上下ボタンで順番を変えられます。TOPは先頭です。','hint'));
@@ -143,21 +145,23 @@ function render(){
  if(current==='dashboard'){
   target.append(node('p','写真や文章は自動で下書き保存されます。公開するまではお客様には見えません。','hint'));
   const quick=node('div',undefined,'quick-grid');for(const [key,title]of [['nextLive','LIVEを更新'],['albums','写真を追加'],['members','メンバーを編集'],['site','TOPを編集']])quick.append(button(title,()=>openSection(key)));target.append(quick);
-  target.append(node('h3','登録されている情報'),node('p',`メンバー ${content.members.length}人 ／ アルバム ${content.albums.length}件`));target.append(node('p','売上・予約・メール件数は、連携が完了してから表示します。','notice'));return;
+  target.append(node('h3','登録されている情報'),node('p',`メンバー ${content.members.length}人 ／ アルバム ${content.albums.length}件`));target.append(node('p','売上・購入者・受付状況はLivePocketで確認できます。HPへの自動同期は行いません。','notice'));livePocketLinks(target);return;
  }
  if(['site','about','mind','youtube','order'].includes(current)){
   const sub=node('nav',undefined,'subtabs');sub.setAttribute('aria-label','TOPの編集エリア');for(const [key,title]of [['site','メイン写真・文章'],['about','ABOUT'],['mind','OUR MIND'],['youtube','YouTube'],['order','並び順']]){const b=button(title,()=>openSection(key));b.setAttribute('aria-current',current===key?'page':'false');sub.append(b);}target.insertBefore(sub,target.children[1]);
   $('#tabs').querySelector('[data-section="site"]').setAttribute('aria-current','page');
  }
  if(current==='order'){orderEditor(target);return;}
- if(['goods','faq','reception','design','staff'].includes(current)){
+ if(current==='reception'){target.append(node('p','QR受付はLivePocketを利用します。','notice'),node('p','チケットの確認・入場受付はLivePocket側で行います。このHPでは受付記録や購入者情報を保存しません。'));livePocketLinks(target);target.append(externalLink('LivePocketの機能・使い方を見る ↗','https://livepocket.jp/owner/function/index.html'));return;}
+ if(['goods','faq','design','staff'].includes(current)){
   target.append(node('p','未接続・開発予定','notice'),node('p',({goods:'写真・紹介文・ショップへのリンクを編集する画面を追加予定です。',faq:'質問と回答をカードで追加・並べ替えできる画面を追加予定です。',reception:'既存QR受付との接続前です。受付担当者に不要な個人情報が見えないことを検証してから利用できるようにします。',design:'現在の公開サイトのデザインを維持しています。色やフォントの変更機能は追加予定です。',staff:'既存の管理者権限を維持しています。アカウント追加・権限変更は、この画面からはまだ行えません。'})[current]));return;
  }
  if(current==='contact')target.append(node('p','ここではお問い合わせの表示・ご相談の種類を編集できます。メール受信箱・返信機能は未接続です。','notice'));
- if(current==='ticket')target.append(node('p','現在は販売先へのリンク設定です。購入者・決済・発券情報の管理は未接続です。','notice'));
+ if(current==='ticket'){target.append(node('p','販売・購入者管理・発券はLivePocketで行います。ここではHPのTICKETボタンの行き先を設定します。','notice'));livePocketLinks(target);target.append(node('p','LIVEごとの販売ページURLにも変更できます。変更は下書き保存後、「公開する」で反映されます。','hint'));}
+ if(current==='nextLive'){target.append(node('p','ここではHPに掲載するLIVE情報を編集します。価格・販売期間・購入者管理はLivePocketで設定してください。','hint'));livePocketLinks(target);}
  const obj=content[current];
  if(Array.isArray(obj))collection(target,content,current);
- else for(const k of Object.keys(obj))if(!k.endsWith('Position'))field(target,obj,k, k==='title'&&['about','mind'].includes(current)?'見出し2（日本語）':labels[k]||k);
+ else for(const k of Object.keys(obj))if(!k.endsWith('Position'))field(target,obj,k, current==='ticket'&&k==='url'?'TICKETボタンのリンク先':k==='title'&&['about','mind'].includes(current)?'見出し2（日本語）':labels[k]||k);
  const group=current==='albums'?'gallery':current;
  const fields=fieldGroups[group]||[];
  const extras=node('details',undefined,'extra-fields');extras.append(node('summary','見出し・ボタン・案内文を編集'));target.append(extras);
