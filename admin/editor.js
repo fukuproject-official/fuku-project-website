@@ -98,7 +98,34 @@ function albumPhotos(parent,album){
   const detail=node('details');detail.append(node('summary','写真の説明・表示位置'));field(detail,photo,'alt');const position=node('label','表示位置');const select=node('select');for(const [value,title]of [['50% 50%','中央'],['50% 0%','上'],['50% 100%','下']]){const option=node('option',title);option.value=value;select.append(option);}select.value=photo.imagePosition||'50% 50%';select.onchange=()=>{photo.imagePosition=select.value;changed();};position.append(select);detail.append(position);card.append(detail);grid.append(card);
  });parent.append(grid);
 }
+const selectedItems={};
+function sideCollection(parent,obj,key){
+ const arr=obj[key],isMember=key==='members';
+ if(!arr.includes(selectedItems[key]))selectedItems[key]=arr[0];
+ const shell=node('div',undefined,'collection-workspace'),list=node('nav',undefined,'collection-list'),panel=node('section',undefined,'collection-editor');list.setAttribute('aria-label',isMember?'メンバーを選択':'アルバムを選択');panel.setAttribute('aria-label',isMember?'選択中のメンバーを編集':'選択中のアルバムを編集');
+ list.append(node('h3',isMember?'メンバー':'アルバム'));
+ arr.forEach((item,i)=>{
+  const choose=button('',()=>{selectedItems[key]=item;render();});choose.className='collection-choice';choose.setAttribute('aria-pressed',String(selectedItems[key]===item));const src=item.image||item.photos?.[0]?.image;
+  if(src){const img=node('img');img.src=imageUrl(src);img.alt='';choose.append(img);}else choose.append(node('span','写真を追加','no-photo'));
+  choose.append(node('strong',item.name||item.title||'名前未入力'));if(!isMember)choose.append(node('small',`${item.photos.length}枚`));else if(item.published===false)choose.append(node('small','非表示'));list.append(choose);
+  choose.draggable=true;choose.ondragstart=e=>e.dataTransfer.setData('application/x-fuku-collection',`${key}:${i}`);choose.ondragover=e=>{if(e.dataTransfer.types.includes('application/x-fuku-collection'))e.preventDefault();};choose.ondrop=e=>{const [kind,index]=e.dataTransfer.getData('application/x-fuku-collection').split(':');const from=Number(index);if(kind!==key||!Number.isInteger(from)||from<0||from>=arr.length)return;e.preventDefault();arr.splice(i,0,arr.splice(from,1)[0]);if(isMember)arr.forEach((x,n)=>x.sortOrder=(n+1)*10);changed();render();};
+ });
+ list.append(button(isMember?'＋ メンバーを追加':'＋ アルバムを作る',()=>{const id=crypto.randomUUID();const item=isMember?{id,name:'新しいメンバー',part:'',image:'',imageAlt:'',bio:'',socials:{instagram:null,youtube:null,website:null},upcomingActivities:[],published:false,placeholder:false,sortOrder:(arr.length+1)*10}:{id,title:'新しいLIVEアルバム',date:'',photos:[]};arr.push(item);selectedItems[key]=item;changed();render();}));
+ const item=selectedItems[key];
+ if(item){
+  panel.append(node('h3',isMember?'プロフィールを編集':'アルバムを編集'));
+  const basic=node('div',undefined,isMember?'member-basic':'album-basic');
+  if(isMember){field(basic,item,'image');const text=node('div');for(const k of ['name','part','bio','published'])field(text,item,k);basic.append(text);panel.append(basic);const socials=node('div',undefined,'member-social-fields');socials.append(node('h3','SNSリンク（空欄なら表示しません）'));for(const k of Object.keys(item.socials))field(socials,item.socials,k);panel.append(socials);field(panel,item,'imageAlt');}
+  else {field(basic,item,'title','アルバム名');field(basic,item,'date','開催日');panel.append(basic);albumPhotos(panel,item);}
+  const actions=node('div',undefined,'actions collection-actions');const i=arr.indexOf(item);
+  for(const [label,delta]of [['順番を前へ',-1],['順番を後へ',1]]){const b=button(label,()=>{[arr[i],arr[i+delta]]=[arr[i+delta],arr[i]];if(isMember)arr.forEach((x,n)=>x.sortOrder=(n+1)*10);changed();render();});b.disabled=i+delta<0||i+delta>=arr.length;actions.append(b);}
+  actions.append(button(isMember?'このメンバーを削除':'このアルバムを削除',()=>{if(confirm('下書きから削除しますか？公開するまでは公開サイトに影響しません。')){arr.splice(i,1);selectedItems[key]=arr[Math.min(i,arr.length-1)];changed();render();}}));panel.append(actions);
+ }else panel.append(node('p',isMember?'左の「メンバーを追加」から登録できます。':'左の「アルバムを作る」から写真を追加できます。','empty'));
+ shell.append(list,panel);parent.append(shell);
+}
 function collection(parent,obj,key){
+ if(['members','albums'].includes(key)){sideCollection(parent,obj,key);return;}
+
  if(key==='photos'){albumPhotos(parent,obj);return;}
  const arr=obj[key];parent.append(node('p',key==='members'?'人数に制限はありません。「表示する」を外すと、内容を残したまま非表示にできます。':key==='albums'?'アルバムを作り、写真をまとめて追加してください。写真がないアルバムは、お客様には表示されません。':'項目の追加・並べ替えができます。','hint'));
  arr.forEach((item,i)=>{const card=node('details',undefined,'card');const summary=node('summary',`${i+1}. ${item.name||item.title||item.caption||'新しい項目'}${item.published===false?'（非表示）':''}`);card.dataset.itemId=item.id||String(i);card.ontoggle=()=>{if(card.open)for(const other of parent.querySelectorAll(':scope > details[data-item-id]'))if(other!==card)other.open=false;};if(['members','albums'].includes(key)){card.classList.add('item-card');const src=item.image||item.photos?.[0]?.image;if(src){const thumb=node('img',undefined,'card-cover');thumb.src=imageUrl(src);thumb.alt='';summary.prepend(thumb);}}card.append(summary);
