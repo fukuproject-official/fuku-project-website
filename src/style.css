@@ -139,3 +139,5 @@ h2[data-copy-id],h3[data-copy-id]{white-space:pre-line}
 
 /* Title variants must stay in the normal text flow, never use the old decorative span positioning. */
 #live-title>.event-title-common,#live-title>.event-title-mobile{position:static;inset:auto;font:inherit;letter-spacing:inherit;line-height:inherit;margin:0;transform:none}
+/* Preserve the line breaks entered in LIVE descriptions on every screen size. */
+#live-description,.performance-detail .body-copy{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.9}
