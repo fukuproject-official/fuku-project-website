@@ -5,7 +5,7 @@ const $=s=>document.querySelector(s);
 const node=(tag,text,cls)=>{const n=document.createElement(tag);if(text!==undefined)n.textContent=text;if(cls)n.className=cls;return n;};
 let fieldGroups={}, content, config, api, token=null, dirty=false, revision=null, current='dashboard', pending=0;
 const sections={goods:'GOODS',faq:'Q&A',reception:'受付',design:'デザイン',staff:'スタッフ',site:'TOP・ヘッダー・フッター',nextLive:'NEXT LIVE',about:'ABOUT',mind:'OUR MIND',members:'MEMBERS・メンバー',albums:'GALLERY・LIVEアルバム',youtube:'YouTube',socials:'FOLLOW US・SNS',contact:'お問い合わせ',ticket:'チケット'};
-const labels={"memberKicker":"MEMBER","profileHeading":"PROFILE","upcomingHeading":"UPCOMING / 今後の活動","upcomingEmpty":"今後の活動は、決まり次第お知らせします。","memberSocialHeading":"FOLLOW / SNS","memberSocialEmpty":"SNSリンクは公開準備中です。","profileButton":"VIEW PROFILE","membersEmpty":"メンバー情報は準備中です。","galleryPlaceholder":"実際の活動写真は近日公開予定です。","ticketPreparing":"チケット販売ページは現在準備中です。 / 公開まで、もうしばらくお待ちください。","videoPreparing":"ライブ映像は近日公開予定です。","playButton":"PLAY FILM","externalFormReady":"専用のお問い合わせフォームで受け付けています。","composeEmail":"メールを作成する","emailHelp":"入力内容を入れたメールアプリが開きます。内容を確認して送信してください。","contactReady":"出演・企画・協賛など、お気軽にご相談ください。","contactPreparing":"お問い合わせの受付は準備中です。",name:'名前',englishName:'英語名',description:'説明文',heroCopy:'TOPのメッセージ（1行ずつ）',heroLabel:'TOPの補足文',draftCopy:'写真・プロフィール準備中の表示',heroImage:'TOP写真',heroImageAlt:'TOP写真の説明',heroVideo:'TOP動画URL（MP4・WebM／空欄なら写真）',photos:'アルバムの写真',title:'タイトル',lead:'写真内の見出し',body:'本文',image:'写真',imageAlt:'写真の説明',message:'メッセージ',part:'担当・肩書き',bio:'プロフィール',instagram:'Instagram URL',x:'X URL',youtube:'YouTube URL',website:'Webサイト URL',placeholder:'準備中の写真・情報',published:'公開サイトに表示する',upcomingActivities:'今後の活動',socials:'SNS',category:'分類名',status:'補足・公開状況',alt:'写真の説明',caption:'写真の見出し',videoId:'YouTube動画URL',poster:'動画のカバー写真',date:'日付',venue:'会場',email:'お問い合わせ先メール',formUrl:'外部フォームURL（設定するとメールフォームの代わりに表示）',categories:'ご相談の種類（1行ずつ）',url:'リンク先URL',heroPosition:'TOP写真の表示位置',imagePosition:'写真の表示位置'};
+const labels={titleMobile:'スマホ用タイトル（空欄なら共通）',openTime:'開場時間',startTime:'開演時間',address:'住所',archived:'過去の出演として表示',"memberKicker":"MEMBER","profileHeading":"PROFILE","upcomingHeading":"UPCOMING / 今後の活動","upcomingEmpty":"今後の活動は、決まり次第お知らせします。","memberSocialHeading":"FOLLOW / SNS","memberSocialEmpty":"SNSリンクは公開準備中です。","profileButton":"VIEW PROFILE","membersEmpty":"メンバー情報は準備中です。","galleryPlaceholder":"実際の活動写真は近日公開予定です。","ticketPreparing":"チケット販売ページは現在準備中です。 / 公開まで、もうしばらくお待ちください。","videoPreparing":"ライブ映像は近日公開予定です。","playButton":"PLAY FILM","externalFormReady":"専用のお問い合わせフォームで受け付けています。","composeEmail":"メールを作成する","emailHelp":"入力内容を入れたメールアプリが開きます。内容を確認して送信してください。","contactReady":"出演・企画・協賛など、お気軽にご相談ください。","contactPreparing":"お問い合わせの受付は準備中です。",name:'名前',englishName:'英語名',description:'説明文',heroCopy:'TOPのメッセージ（1行ずつ）',heroLabel:'TOPの補足文',draftCopy:'写真・プロフィール準備中の表示',heroImage:'TOP写真',heroImageAlt:'TOP写真の説明',heroVideo:'TOP動画URL（MP4・WebM／空欄なら写真）',photos:'アルバムの写真',title:'タイトル',lead:'写真内の見出し',body:'本文',image:'写真',imageAlt:'写真の説明',message:'メッセージ',part:'担当・肩書き',bio:'プロフィール',instagram:'Instagram URL',x:'X URL',youtube:'YouTube URL',website:'Webサイト URL',placeholder:'準備中の写真・情報',published:'公開サイトに表示する',upcomingActivities:'今後の活動',socials:'SNS',category:'分類名',status:'補足・公開状況',alt:'写真の説明',caption:'写真の見出し',videoId:'YouTube動画URL',poster:'動画のカバー写真',date:'日付',venue:'会場',email:'お問い合わせ先メール',formUrl:'外部フォームURL（設定するとメールフォームの代わりに表示）',categories:'ご相談の種類（1行ずつ）',url:'リンク先URL',heroPosition:'TOP写真の表示位置',imagePosition:'写真の表示位置'};
 function externalLink(label,url){const a=node('a',label,'external-action');a.href=url;a.target='_blank';a.rel='noopener noreferrer';return a;}
 function livePocketLinks(parent){const actions=node('div',undefined,'actions');actions.append(externalLink('LivePocketの管理画面を開く ↗','https://promoter.livepocket.jp/login/'));const url=safeUrl(content.ticket.url);if(url)actions.append(externalLink('お客様向けチケットページを見る ↗',url));parent.append(actions);}
 function notify(t){$('#status').textContent=t;}
@@ -34,7 +34,7 @@ function field(parent,obj,key,label=labels[key]||key){
  if(v&&typeof v==='object'&&!Array.isArray(v)){const d=node('details');d.append(node('summary',label));Object.keys(v).forEach(k=>field(d,v,k));parent.append(d);return;}
  const wrap=node('label',label);wrap.dataset.field=key;let input;
  if(typeof v==='boolean'){input=node('input');input.type='checkbox';input.checked=v;input.onchange=()=>{obj[key]=input.checked;changed();};wrap.prepend(input);}
- else {input=node(['body','bio','message','lead','description','heroCopy','categories'].includes(key)||String(v||'').includes('\n')?'textarea':'input'); input.value=Array.isArray(v)?v.join('\n'):v??''; if(input.tagName==='TEXTAREA')input.rows=4; input.oninput=()=>{obj[key]=Array.isArray(v)?input.value.split('\n').filter(Boolean):input.value;changed();};
+ else {input=node(['title','titleMobile','body','bio','message','lead','description','heroCopy','categories'].includes(key)||/見出し/.test(label)||String(v||'').includes('\n')?'textarea':'input'); input.value=Array.isArray(v)?v.join('\n'):v??''; if(input.tagName==='TEXTAREA')input.rows=4; input.oninput=()=>{obj[key]=Array.isArray(v)?input.value.split('\n').filter(Boolean):input.value;changed();};
  if(key==='videoId'){input.value=v?`https://www.youtube.com/watch?v=${v}`:'';input.oninput=()=>{const id=youtubeId(input.value.trim());input.setCustomValidity(input.value&&!id?'YouTubeの動画URLを確認してください。':'');obj[key]=id||input.value||null;changed();};input.onchange=()=>{if(input.reportValidity())render();};}
  wrap.append(input);}
  parent.append(wrap);
@@ -186,6 +186,7 @@ function render(){
  if(current==='contact')target.append(node('p','ここではお問い合わせの表示・ご相談の種類を編集できます。メール受信箱・返信機能は未接続です。','notice'));
  if(current==='ticket'){target.append(node('p','販売・購入者管理・発券はLivePocketで行います。ここではHPのTICKETボタンの行き先を設定します。','notice'));livePocketLinks(target);target.append(node('p','LIVEごとの販売ページURLにも変更できます。変更は下書き保存後、「公開する」で反映されます。','hint'));}
  if(current==='nextLive'){target.append(node('p','ここではHPに掲載するLIVE情報を編集します。価格・販売期間・購入者管理はLivePocketで設定してください。','hint'));livePocketLinks(target);}
+ if(current==='nextLive'){liveEditor(target);return;}
  const obj=content[current];
  if(Array.isArray(obj))collection(target,content,current);
  else for(const k of Object.keys(obj))if(!k.endsWith('Position'))field(target,obj,k, current==='ticket'&&k==='url'?'TICKETボタンのリンク先':k==='title'&&['about','mind'].includes(current)?'見出し2（日本語）':labels[k]||k);
@@ -204,6 +205,31 @@ function render(){
   if(media)target.insertBefore(media,target.children[2]);target.insertBefore(primary,media?.nextSibling||target.children[1]);target.append(more);
  }
  if(current==='youtube'&&youtubeId(content.youtube.videoId)){const frame=node('iframe',undefined,'video-preview');frame.title='YouTubeプレビュー';frame.src=`https://www.youtube-nocookie.com/embed/${youtubeId(content.youtube.videoId)}`;target.append(frame);}
+}
+let selectedPerformance=null;
+function liveFields(parent,item){
+ const layout=node('div',undefined,'live-edit-layout');
+ photo(layout,item,'image','案内画像（縦・横どちらも可）');
+ const fields=node('div',undefined,'live-edit-fields');
+ field(fields,item,'title','タイトル（Enterで改行）');field(fields,item,'titleMobile');
+ const row=node('div',undefined,'album-basic');for(const k of ['date','venue','openTime','startTime'])field(row,item,k);fields.append(row);
+ for(const k of ['address','description','imageAlt'])field(fields,item,k);
+ if(item.id){field(fields,item,'url','詳細・チケットURL（任意）');field(fields,item,'archived');}
+ layout.append(fields);parent.append(layout);
+}
+function liveEditor(target){
+ target.append(node('h3','メインLIVE'),node('p','タイトルはEnterで改行できます。スマホだけ改行位置を変える場合は「スマホ用タイトル」を入力してください。時間欄が空欄なら時計アイコンは表示しません。','hint'));
+ liveFields(target,content.nextLive);
+ const area=node('section',undefined,'performance-editor');area.append(node('h3','Performance information｜その他の出演情報'),node('p','写真と出演情報を追加します。開催日を YYYY-MM-DD 形式で入力すると、翌日（日本時間）から過去の出演一覧へ移ります。日付未定の場合は手動で「過去の出演として表示」を選べます。','hint'));
+ const arr=content.nextLive.performances;
+ if(!arr.includes(selectedPerformance))selectedPerformance=arr[0];
+ const list=node('div',undefined,'performance-selector');
+ arr.forEach(item=>{const b=button(item.title||'タイトル未入力',()=>{selectedPerformance=item;render();});b.setAttribute('aria-pressed',String(item===selectedPerformance));list.append(b);});
+ list.append(button('＋ 出演情報を追加',()=>{const item={id:crypto.randomUUID(),title:'新しい出演情報',titleMobile:'',date:'',venue:'',openTime:'',startTime:'',address:'',description:'',image:'',imageAlt:'',url:'',archived:false};arr.push(item);selectedPerformance=item;changed();render();}));area.append(list);
+ if(selectedPerformance){liveFields(area,selectedPerformance);const actions=node('div',undefined,'actions');const i=arr.indexOf(selectedPerformance);for(const [label,delta] of [['前へ',-1],['後へ',1]]){const b=button(label,()=>{[arr[i],arr[i+delta]]=[arr[i+delta],arr[i]];changed();render();});b.disabled=i+delta<0||i+delta>=arr.length;actions.append(b);}actions.append(button('この出演情報を削除',()=>{if(confirm('この出演情報を下書きから削除しますか？')){arr.splice(i,1);selectedPerformance=null;changed();render();}}));area.append(actions);}
+ target.append(area);
+ const extras=node('details',undefined,'extra-fields');extras.append(node('summary','NEXT LIVEの見出し・ボタンを編集'));content.copy ||= {};
+ for(const entry of fieldGroups.nextLive||[]){content.copy[entry.id] ||= {label:entry.label,values:Object.fromEntries(entry.defaults.map((v,i)=>[i,v]))};for(const [i,value]of entry.defaults.entries()){content.copy[entry.id].values[i] ??= value;field(extras,content.copy[entry.id].values,String(i),entry.label);}}target.append(extras);
 }
 async function start(){
  const initial=await fetch('/data/site.json').then(r=>r.json());
