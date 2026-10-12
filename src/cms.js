@@ -15,6 +15,7 @@ export function youtubeId(value) {
 }
 export function normalizeContent(c) {
  c.sectionOrder=sectionOrder(c.sectionOrder);
+ c.nextLive.titleMobile ??= '';c.nextLive.openTime ??= '';c.nextLive.startTime ??= '';c.nextLive.address ??= '';c.nextLive.performances ??= [];
  c.albums ||= [];c.site.heroVideo ||= '';c.nextLive.image ||= '';c.nextLive.imageAlt ||= '';
  for(const id of ['text-20','text-89']){const item=c.copy?.[id];if(item&&Object.keys(item.values).length>1)item.values={'0':Object.values(item.values).join('')};}
  const old=c.copy?.['text-86']?.values;if(old)for(const k of Object.keys(old))old[k]=old[k].replace('プロフィールと今後の活動。','プロフィール。');
@@ -33,6 +34,7 @@ export function validateContent(c) {
     ids.add(m.id);
   }
   if(c.albums && (!Array.isArray(c.albums)||c.albums.some(a=>!a.title||!Array.isArray(a.photos))))throw new Error('アルバムのタイトルと写真を確認してください。');
+  if(c.nextLive.performances && (!Array.isArray(c.nextLive.performances)||c.nextLive.performances.some(e=>!e.id||typeof e.title!=='string'||!e.title.trim())))throw new Error('出演情報のタイトルを入力してください。');
   if (c.youtube.videoId && !youtubeId(c.youtube.videoId)) throw new Error('YouTubeのURLを確認してください。');
   const visit = (v, key = '') => {
     if (v && typeof v === 'object') { for (const [k,x] of Object.entries(v)) visit(x,k); return; }

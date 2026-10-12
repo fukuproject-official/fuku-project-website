@@ -1,3 +1,4 @@
+import {isPastPerformance} from './events.js';
 import {SECTION_IDS, sectionOrder} from './cms.js';
 import { loadContent, visibleMembers, safeUrl, imageUrl, youtubeEmbed, contactMailto, offerMailto } from './content.js';
 const $ = (selector, root = document) => root.querySelector(selector);
@@ -66,6 +67,35 @@ function socialControl(key, url, icon = false) {
     node.append(label);
   }
   return node;
+}
+function liveTitle(target,event){
+ target.replaceChildren(el('span','event-title-common',event.title||'COMING SOON'));
+ if(event.titleMobile?.trim()){target.classList.add('has-mobile-title');target.append(el('span','event-title-mobile',event.titleMobile));}
+}
+function liveMeta(event){
+ const box=el('div','event-meta');
+ const paths={date:'<rect x="4" y="5" width="16" height="16" rx="2"/><path d="M8 3v4M16 3v4M4 11h16M8 15h1M12 15h1M16 15h1M8 18h1M12 18h1"/>',time:'<circle cx="12" cy="12" r="9"/><path d="M12 6v6l4 3"/>',venue:'<path d="M19 10c0 5-7 11-7 11S5 15 5 10a7 7 0 0 1 14 0Z"/><circle cx="12" cy="10" r="2.5"/>'};
+ const time=[event.startTime&&`開演 ${event.startTime}`,event.openTime&&`開場 ${event.openTime}`].filter(Boolean).join('\n');
+ for(const [key,label,value]of [['date','日程',event.date],['time','時間',time],['venue','会場',[event.venue,event.address].filter(Boolean).join('\n')]]){
+  if(!value)continue;const row=el('div','event-meta-row'),icon=el('span','event-meta-icon');icon.innerHTML=`<svg viewBox="0 0 24 24" aria-hidden="true">${paths[key]}</svg>`;const body=el('span','',value);row.setAttribute('aria-label',label);row.append(icon,body);box.append(row);
+ }return box;
+}
+function performanceDetail(event){
+ const body=el('div','performance-detail');const title=el('h2','performance-title');title.id='modal-title';liveTitle(title,event);body.append(title);
+ if(event.image)body.append(image(event.image,event.imageAlt||event.title));body.append(liveMeta(event));if(event.description)body.append(el('p','body-copy',event.description));const url=safeUrl(event.url);if(url){const a=externalLink('詳細・チケットを見る ↗',url);a.className='button';body.append(a);}openModal(body);
+}
+function performanceCard(event){
+ const card=el('article','performance-card');
+ const b=el('button','performance-cover');b.setAttribute('aria-label',`${event.title}の詳細を見る`);if(event.image)b.append(image(event.image,event.imageAlt||event.title));else b.append(el('span','','FUKU PROJECT'));b.onclick=()=>performanceDetail(event);
+ const title=el('h3','performance-title');liveTitle(title,event);card.append(b,title,liveMeta(event));const more=el('button','performance-more','詳細を見る');more.onclick=()=>performanceDetail(event);card.append(more);return card;
+}
+function performances(events){
+ if(!events.length)return;
+ const area=el('section','performances');area.setAttribute('aria-label','その他の出演情報');
+ const heading=el('h3'),link=el('button','performance-heading','Performance information');heading.append(link);area.append(heading,el('p','performance-hint','出演情報 ／ 見出しを押すと過去の出演も見られます'));
+ link.onclick=()=>{const body=el('div','performance-archive'),title=el('h2','','Performance information');title.id='modal-title';body.append(title);for(const [past,label]of [[false,'今後の出演'],[true,'過去の出演']]){body.append(el('h3','',label));const group=el('div','performance-archive-grid'),items=events.filter(e=>isPastPerformance(e)===past);items.forEach(e=>group.append(performanceCard(e)));if(!items.length)group.append(el('p','','登録された出演情報はありません。'));body.append(group);}openModal(body);};
+ const track=el('div','performance-track');track.tabIndex=0;track.setAttribute('aria-label','出演情報を横にスクロール');events.filter(e=>!isPastPerformance(e)).forEach(e=>track.append(performanceCard(e)));
+ if(!track.children.length)area.append(el('p','body-copy','今後の出演情報は、決まり次第お知らせします。'));else{const controls=el('div','performance-controls');for(const [label,direction]of [['前の出演情報',-1],['次の出演情報',1]]){const b=el('button','',direction<0?'←':'→');b.setAttribute('aria-label',label);b.onclick=()=>track.scrollBy({left:direction*(track.firstElementChild.getBoundingClientRect().width+24),behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});controls.append(b);}area.append(controls,track);}$('#next-live').append(area);
 }
 function renderMember(member) {
   const content = el('div', 'modal-member');
@@ -183,9 +213,10 @@ async function init() {
     const iframe = el('iframe'); iframe.title = content.youtube.title; iframe.src = videoSrc; iframe.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen'; iframe.allowFullscreen = true; iframe.referrerPolicy = 'strict-origin-when-cross-origin'; $('#video-container').replaceChildren(iframe); iframe.focus();
   });
   if(content.nextLive.image){$('#live-image').src=imageUrl(content.nextLive.image);$('#live-image').alt=content.nextLive.imageAlt||content.nextLive.title||'ライブ案内';$('#live-image').hidden=false;}
-  if (content.nextLive.title) text('#live-title', content.nextLive.title);
+  liveTitle($('#live-title'),content.nextLive);
   text('#live-description', content.nextLive.description);
-  text('#live-meta', [content.nextLive.date, content.nextLive.venue].filter(Boolean).join(' / '));
+  $('#live-meta').replaceChildren(liveMeta(content.nextLive));
+  performances(content.nextLive.performances||[]);
   text('#contact-message', content.contact.message);
   content.contact.categories.forEach(category => { const option = el('option', '', category); option.value = category; $('#contact-category').append(option); });
   const externalForm = safeUrl(content.contact.formUrl);
