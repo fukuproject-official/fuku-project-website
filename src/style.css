@@ -141,3 +141,7 @@ h2[data-copy-id],h3[data-copy-id]{white-space:pre-line}
 #live-title>.event-title-common,#live-title>.event-title-mobile{position:static;inset:auto;font:inherit;letter-spacing:inherit;line-height:inherit;margin:0;transform:none}
 /* Preserve the line breaks entered in LIVE descriptions on every screen size. */
 #live-description,.performance-detail .body-copy{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.9}
+
+.event-meta-row>span:last-child{white-space:pre-wrap}
+.event-map-link{display:table;font-size:13px;line-height:1.6;margin-top:9px;padding:5px 0;color:inherit;opacity:.75;border-bottom:1px solid currentColor;white-space:normal}.event-map-link:hover{opacity:1}
+#live-description{margin:24px 0}

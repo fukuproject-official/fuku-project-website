@@ -77,7 +77,7 @@ function liveMeta(event){
  const paths={date:'<rect x="4" y="5" width="16" height="16" rx="2"/><path d="M8 3v4M16 3v4M4 11h16M8 15h1M12 15h1M16 15h1M8 18h1M12 18h1"/>',time:'<circle cx="12" cy="12" r="9"/><path d="M12 6v6l4 3"/>',venue:'<path d="M19 10c0 5-7 11-7 11S5 15 5 10a7 7 0 0 1 14 0Z"/><circle cx="12" cy="10" r="2.5"/>'};
  const time=[event.startTime&&`開演 ${event.startTime}`,event.openTime&&`開場 ${event.openTime}`].filter(Boolean).join('\n');
  for(const [key,label,value]of [['date','日程',event.date],['time','時間',time],['venue','会場',[event.venue,event.address].filter(Boolean).join('\n')]]){
-  if(!value)continue;const row=el('div','event-meta-row'),icon=el('span','event-meta-icon');icon.innerHTML=`<svg viewBox="0 0 24 24" aria-hidden="true">${paths[key]}</svg>`;const body=el('span','',value);row.setAttribute('aria-label',label);row.append(icon,body);box.append(row);
+  if(!value)continue;const row=el('div','event-meta-row'),icon=el('span','event-meta-icon');icon.innerHTML=`<svg viewBox="0 0 24 24" aria-hidden="true">${paths[key]}</svg>`;const body=el('span','',value);row.setAttribute('aria-label',label);if(key==='venue'){const query=[event.venue,event.address].filter(Boolean).join(' ').replace(/\s+/g,' ').trim();const link=externalLink('マップを見る ↗',`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`);link.className='event-map-link';link.setAttribute('aria-label','Googleマップで会場を見る（新しいタブ）');body.append(link);}row.append(icon,body);box.append(row);
  }return box;
 }
 function performanceDetail(event){
@@ -216,6 +216,7 @@ async function init() {
   liveTitle($('#live-title'),content.nextLive);
   text('#live-description', content.nextLive.description);
   $('#live-meta').replaceChildren(liveMeta(content.nextLive));
+  $('#live-meta').after($('#live-description'));
   performances(content.nextLive.performances||[]);
   text('#contact-message', content.contact.message);
   content.contact.categories.forEach(category => { const option = el('option', '', category); option.value = category; $('#contact-category').append(option); });
