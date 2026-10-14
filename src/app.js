@@ -104,7 +104,6 @@ function renderMember(member,selectedPhoto=null) {
   const setPortrait=photo=>{portrait.src=imageUrl(photo.image);portrait.alt=photo.alt||photo.imageAlt||member.name;portrait.style.objectPosition=photo.imagePosition||'50% 50%';};
   if(selectedPhoto)setPortrait(selectedPhoto);
   const photos=(member.photos||[]).filter(p=>p.image).slice(0,6);
-  if(photos.length){const thumbs=el('div','member-thumbnails');for(const [i,photo]of [member,...photos].entries()){const b=el('button');b.setAttribute('aria-label',i?`写真${i}を表示`:'メイン写真を表示');b.append(image(photo.image,photo.alt||member.name));b.onclick=()=>setPortrait(photo);thumbs.append(b);}media.append(thumbs);}
   content.append(media);
   const details = el('div');
   details.append(el('p', 'eyebrow', copy('memberKicker', 'MEMBER')));
@@ -113,7 +112,9 @@ function renderMember(member,selectedPhoto=null) {
   const links = el('div', 'member-socials');
   for (const [key,value] of Object.entries(member.socials)) if(key !== 'x' && safeUrl(value)) links.append(socialControl(key,value,true));
   if(links.childElementCount) details.append(links);
-  content.append(details); openModal(content);
+  content.append(details);
+  if(photos.length){const thumbs=el('div','member-thumbnails');for(const [i,photo]of photos.entries()){const b=el('button');b.setAttribute('aria-label',`写真${i+1}を表示`);b.append(image(photo.image,photo.alt||member.name));b.onclick=()=>setPortrait(photo);thumbs.append(b);}content.append(thumbs);}
+  openModal(content);
 }
 function showAlbum(album,track,opener){
  const cards=[...track.childNodes];const photos=(album.photos||[]).filter(item=>item.image);

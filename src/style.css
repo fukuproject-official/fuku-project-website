@@ -173,3 +173,5 @@ dialog.photo-viewer::backdrop{background:#080808}
 .photo-viewer-arrow.previous{left:8px}.photo-viewer-arrow.next{right:8px}.photo-viewer-arrow[hidden]{display:none}
 .photo-viewer-counter{position:absolute;bottom:12px;left:0;right:0;text-align:center;font:13px/1.5 var(--sans)}
 @media(max-width:600px){.album-page-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:24px}.album-list.album-expanded{scroll-margin-top:90px}.photo-viewer-top{padding:10px 12px;gap:10px}.photo-viewer-title{font-size:12px}.photo-viewer-stage{inset:64px 0 44px}.photo-viewer-arrow{width:40px;height:52px}.photo-viewer-arrow.previous{left:0}.photo-viewer-arrow.next{right:0}}
+
+.modal-member>.member-thumbnails{grid-column:1/-1;margin-top:0}
