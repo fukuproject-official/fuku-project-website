@@ -4,7 +4,7 @@ import {imageUrl, safeUrl} from '/src/content.js';
 const $=s=>document.querySelector(s);
 const node=(tag,text,cls)=>{const n=document.createElement(tag);if(text!==undefined)n.textContent=text;if(cls)n.className=cls;return n;};
 let fieldGroups={}, content, config, api, token=null, dirty=false, revision=null, current='dashboard', pending=0;
-const sections={goods:'GOODS',faq:'Q&A',reception:'受付',design:'デザイン',staff:'スタッフ',site:'TOP・ヘッダー・フッター',nextLive:'NEXT LIVE',about:'ABOUT',mind:'OUR MIND',members:'MEMBERS・メンバー',albums:'GALLERY・LIVEアルバム',youtube:'YouTube',socials:'FOLLOW US・SNS',contact:'お問い合わせ',ticket:'チケット'};
+const sections={goods:'GOODS',faq:'Q&A',reception:'受付',design:'デザイン',staff:'スタッフ',site:'TOP・ヘッダー・フッター',nextLive:'NEXT LIVE',about:'ABOUT',mind:'OUR MIND',members:'MEMBERS・メンバー',guestAlbums:'GUEST GALLERY・ゲストアルバム',albums:'GALLERY・LIVEアルバム',youtube:'YouTube',socials:'FOLLOW US・SNS',contact:'お問い合わせ',ticket:'チケット'};
 const labels={titleMobile:'スマホ用タイトル（空欄なら共通）',openTime:'開場時間',startTime:'開演時間',address:'住所（Enterで改行）',archived:'過去の出演として表示',"memberKicker":"MEMBER","profileHeading":"PROFILE","upcomingHeading":"UPCOMING / 今後の活動","upcomingEmpty":"今後の活動は、決まり次第お知らせします。","memberSocialHeading":"FOLLOW / SNS","memberSocialEmpty":"SNSリンクは公開準備中です。","profileButton":"VIEW PROFILE","membersEmpty":"メンバー情報は準備中です。","galleryPlaceholder":"実際の活動写真は近日公開予定です。","ticketPreparing":"チケット販売ページは現在準備中です。 / 公開まで、もうしばらくお待ちください。","videoPreparing":"ライブ映像は近日公開予定です。","playButton":"PLAY FILM","externalFormReady":"専用のお問い合わせフォームで受け付けています。","composeEmail":"メールを作成する","emailHelp":"入力内容を入れたメールアプリが開きます。内容を確認して送信してください。","contactReady":"出演・企画・協賛など、お気軽にご相談ください。","contactPreparing":"お問い合わせの受付は準備中です。",name:'名前',englishName:'英語名',description:'説明文',heroCopy:'TOPのメッセージ（1行ずつ）',heroLabel:'TOPの補足文',draftCopy:'写真・プロフィール準備中の表示',heroImage:'TOP写真',heroImageAlt:'TOP写真の説明',heroVideo:'TOP動画URL（MP4・WebM／空欄なら写真）',photos:'アルバムの写真',title:'タイトル',lead:'写真内の見出し',body:'本文',image:'写真',imageAlt:'写真の説明',message:'メッセージ',part:'担当・肩書き',bio:'プロフィール',instagram:'Instagram URL',x:'X URL',youtube:'YouTube URL',website:'Webサイト URL',placeholder:'準備中の写真・情報',published:'公開サイトに表示する',upcomingActivities:'今後の活動',socials:'SNS',category:'分類名',status:'補足・公開状況',alt:'写真の説明',caption:'写真の見出し',videoId:'YouTube動画URL',poster:'動画のカバー写真',date:'日付',venue:'会場（Enterで改行）',email:'お問い合わせ先メール',formUrl:'外部フォームURL（設定するとメールフォームの代わりに表示）',categories:'ご相談の種類（1行ずつ）',url:'リンク先URL',heroPosition:'TOP写真の表示位置',imagePosition:'写真の表示位置'};
 function externalLink(label,url){const a=node('a',label,'external-action');a.href=url;a.target='_blank';a.rel='noopener noreferrer';return a;}
 function livePocketLinks(parent){const actions=node('div',undefined,'actions');actions.append(externalLink('LivePocketの管理画面を開く ↗','https://promoter.livepocket.jp/login/'));const url=safeUrl(content.ticket.url);if(url)actions.append(externalLink('お客様向けチケットページを見る ↗',url));parent.append(actions);}
@@ -70,12 +70,13 @@ function photo(parent,obj,key,label){
  const advanced=node('details');advanced.append(node('summary','画像URLで指定'));const url=node('label','画像URL');const u=node('input');u.value=obj[key]||'';u.oninput=()=>{obj[key]=u.value;img.hidden=!u.value;if(u.value)img.src=imageUrl(u.value);changed();};url.append(u);advanced.append(url);section.append(advanced);
  const position=node('label','写真の表示位置');const select=node('select');for(const [value,title] of [['50% 50%','中央'],['50% 0%','上'],['50% 100%','下'],['0% 50%','左'],['100% 50%','右']]){const o=node('option',title);o.value=value;select.append(o);}select.value=obj[posKey]||'50% 50%';select.onchange=()=>{obj[posKey]=select.value;img.style.objectPosition=select.value;changed();};position.append(select);if(current!=='nextLive'){section.append(position,node('p','写真をドラッグして位置を調整できます。クリックで写真を変更します。','hint'));}section.append(button('写真を外す',()=>{obj[key]='';changed();render();}));parent.append(section);
 }
-function albumPhotos(parent,album){
- parent.append(node('p','① 写真をまとめて選ぶ → ② アルバム名を入力 → ③ 下書き保存・プレビュー・公開。先頭の写真が表紙になります。','hint'));
- const picker=node('label','＋ 写真をまとめて追加', 'album-upload');const input=node('input');input.type='file';input.multiple=true;input.accept='image/jpeg,image/png,image/webp';picker.append(input);parent.append(picker,node('p','何枚でも一緒に選べます。JPEG・PNG・WebP、1枚30MBまで。','hint'));
+function albumPhotos(parent,album,{member=false}={}){
+ album.photos ??= [];
+ parent.append(node('p',member?'メイン写真とは別に6枚まで追加できます。小さな写真を押すと大きく表示されます。':'① 写真をまとめて選ぶ → ② アルバム名を入力 → ③ 下書き保存・プレビュー・公開。先頭の写真が表紙になります。','hint'));
+ const picker=node('label','＋ 写真をまとめて追加', 'album-upload');const input=node('input');input.type='file';input.multiple=true;input.accept='image/jpeg,image/png,image/webp';picker.append(input);parent.append(picker,node('p',member?'6枚までまとめて選べます。JPEG・PNG・WebP、1枚30MBまで。':'何枚でも一緒に選べます。JPEG・PNG・WebP、1枚30MBまで。','hint'));
  const progress=node('p','','album-progress');progress.setAttribute('role','status');parent.append(progress);
  input.onchange=async()=>{
-  const files=[...input.files];input.value='';if(!files.length)return;
+  const files=[...input.files];input.value='';if(!files.length)return;if(member&&album.photos.length+files.length>6){notify('追加写真は6枚までです。空き枚数に合わせて選んでください。');return;}
   pending++;$('#editor').inert=true;$('#tabs').inert=true;$('#save').disabled=true;$('#preview').disabled=true;$('#publish').disabled=true;
   let count=0;const failures=[];
   try{for(const [i,file] of files.entries()){
@@ -90,8 +91,8 @@ function albumPhotos(parent,album){
  };
  const grid=node('div',undefined,'admin-album-grid');
  album.photos.forEach((photo,i)=>{
-  const card=node('div',undefined,'admin-album-photo');const img=node('img');if(photo.image)img.src=imageUrl(photo.image);img.alt=photo.alt||`写真 ${i+1}`;card.append(img,node('p',i===0?'表紙':`写真 ${i+1}`));
-  const cover=button('表紙にする',()=>{album.photos.splice(i,1);album.photos.unshift(photo);changed();render();});cover.disabled=i===0;card.append(cover);
+  const card=node('div',undefined,'admin-album-photo');const img=node('img');if(photo.image)img.src=imageUrl(photo.image);img.alt=photo.alt||`写真 ${i+1}`;card.append(img,node('p',!member&&i===0?'表紙':`写真 ${i+1}`));
+  const cover=button('表紙にする',()=>{album.photos.splice(i,1);album.photos.unshift(photo);changed();render();});cover.disabled=i===0;if(!member)card.append(cover);
   for(const [text,delta]of [['←',-1],['→',1]]){const b=button(text,()=>{[album.photos[i],album.photos[i+delta]]=[album.photos[i+delta],album.photos[i]];changed();render();});b.disabled=i+delta<0||i+delta>=album.photos.length;b.setAttribute('aria-label',`写真 ${i+1}を${delta<0?'前':'後'}へ`);card.append(b);}
   const handle=button('⋮⋮ 並べ替え',()=>{});handle.draggable=true;handle.ondragstart=e=>e.dataTransfer.setData('application/x-fuku-photo',String(i));card.ondragover=e=>{if(e.dataTransfer.types.includes('application/x-fuku-photo'))e.preventDefault();};card.ondrop=e=>{if(!e.dataTransfer.types.includes('application/x-fuku-photo'))return;e.preventDefault();e.stopPropagation();const from=Number(e.dataTransfer.getData('application/x-fuku-photo'));if(!Number.isInteger(from)||from<0||from>=album.photos.length)return;album.photos.splice(i,0,album.photos.splice(from,1)[0]);changed();render();};card.append(handle);
   card.append(button('外す',()=>{if(confirm('この写真をアルバムから外しますか？公開するまでは公開サイトに影響しません。')){album.photos.splice(i,1);changed();render();}}));
@@ -115,7 +116,7 @@ function sideCollection(parent,obj,key){
  if(item){
   panel.append(node('h3',isMember?'プロフィールを編集':'アルバムを編集'));
   const basic=node('div',undefined,isMember?'member-basic':'album-basic');
-  if(isMember){field(basic,item,'image');const text=node('div');for(const k of ['name','part','bio','published'])field(text,item,k);basic.append(text);panel.append(basic);const socials=node('div',undefined,'member-social-fields');socials.append(node('h3','SNSリンク（空欄なら表示しません）'));for(const k of Object.keys(item.socials))field(socials,item.socials,k);panel.append(socials);field(panel,item,'imageAlt');}
+  if(isMember){field(basic,item,'image');const text=node('div');for(const k of ['name','part','bio','published'])field(text,item,k);basic.append(text);panel.append(basic);const socials=node('div',undefined,'member-social-fields');socials.append(node('h3','SNSリンク（空欄なら表示しません）'));for(const k of Object.keys(item.socials))field(socials,item.socials,k);panel.append(socials);field(panel,item,'imageAlt');panel.append(node('h3','追加写真（最大6枚）'));albumPhotos(panel,item,{member:true});}
   else {field(basic,item,'title','アルバム名');field(basic,item,'date','開催日');panel.append(basic);albumPhotos(panel,item);}
   const actions=node('div',undefined,'actions collection-actions');const i=arr.indexOf(item);
   for(const [label,delta]of [['順番を前へ',-1],['順番を後へ',1]]){const b=button(label,()=>{[arr[i],arr[i+delta]]=[arr[i+delta],arr[i]];if(isMember)arr.forEach((x,n)=>x.sortOrder=(n+1)*10);changed();render();});b.disabled=i+delta<0||i+delta>=arr.length;actions.append(b);}
@@ -124,11 +125,11 @@ function sideCollection(parent,obj,key){
  shell.append(list,panel);parent.append(shell);
 }
 function collection(parent,obj,key){
- if(['members','albums'].includes(key)){sideCollection(parent,obj,key);return;}
+ if(['members','albums','guestAlbums'].includes(key)){sideCollection(parent,obj,key);return;}
 
  if(key==='photos'){albumPhotos(parent,obj);return;}
  const arr=obj[key];parent.append(node('p',key==='members'?'人数に制限はありません。「表示する」を外すと、内容を残したまま非表示にできます。':key==='albums'?'アルバムを作り、写真をまとめて追加してください。写真がないアルバムは、お客様には表示されません。':'項目の追加・並べ替えができます。','hint'));
- arr.forEach((item,i)=>{const card=node('details',undefined,'card');const summary=node('summary',`${i+1}. ${item.name||item.title||item.caption||'新しい項目'}${item.published===false?'（非表示）':''}`);card.dataset.itemId=item.id||String(i);card.ontoggle=()=>{if(card.open)for(const other of parent.querySelectorAll(':scope > details[data-item-id]'))if(other!==card)other.open=false;};if(['members','albums'].includes(key)){card.classList.add('item-card');const src=item.image||item.photos?.[0]?.image;if(src){const thumb=node('img',undefined,'card-cover');thumb.src=imageUrl(src);thumb.alt='';summary.prepend(thumb);}}card.append(summary);
+ arr.forEach((item,i)=>{const card=node('details',undefined,'card');const summary=node('summary',`${i+1}. ${item.name||item.title||item.caption||'新しい項目'}${item.published===false?'（非表示）':''}`);card.dataset.itemId=item.id||String(i);card.ontoggle=()=>{if(card.open)for(const other of parent.querySelectorAll(':scope > details[data-item-id]'))if(other!==card)other.open=false;};if(['members','albums','guestAlbums'].includes(key)){card.classList.add('item-card');const src=item.image||item.photos?.[0]?.image;if(src){const thumb=node('img',undefined,'card-cover');thumb.src=imageUrl(src);thumb.alt='';summary.prepend(thumb);}}card.append(summary);
  if(key==='members'){
   const handle=button('⋮⋮ 並べ替え',e=>e.preventDefault());handle.draggable=true;handle.className='member-handle';handle.setAttribute('aria-label',item.name+'をつかんで移動');handle.ondragstart=e=>{e.stopPropagation();e.dataTransfer.setData('application/x-fuku-member',String(i));};summary.append(handle);
   card.ondragover=e=>{if(e.dataTransfer.types.includes('application/x-fuku-member'))e.preventDefault();};card.ondrop=e=>{if(!e.dataTransfer.types.includes('application/x-fuku-member'))return;e.preventDefault();const from=Number(e.dataTransfer.getData('application/x-fuku-member'));if(!Number.isInteger(from)||from<0||from>=arr.length)return;arr.splice(i,0,arr.splice(from,1)[0]);arr.forEach((x,n)=>x.sortOrder=(n+1)*10);changed();render();};
@@ -153,7 +154,7 @@ function moveSection(key,target){
 }
 function renderTabs(){
  const tabs=$('#tabs');tabs.replaceChildren();
- const items=[['dashboard','⌂ ダッシュボード'],['site','▧ TOP'],['nextLive','▣ LIVE'],['albums','▦ PHOTO・写真'],['members','♙ MEMBER'],['goods','◇ GOODS'],['faq','? Q&A'],['ticket','▤ チケット'],['reception','▥ 受付・LivePocket'],['contact','✉ メール・お問い合わせ'],['design','◐ デザイン'],['socials','⚙ サイト設定・SNS'],['staff','♧ スタッフ']];
+ const items=[['dashboard','⌂ ダッシュボード'],['site','▧ TOP'],['nextLive','▣ LIVE'],['albums','▦ PHOTO・写真'],['guestAlbums','▦ GUEST GALLERY'],['members','♙ MEMBER'],['goods','◇ GOODS'],['faq','? Q&A'],['ticket','▤ チケット'],['reception','▥ 受付・LivePocket'],['contact','✉ メール・お問い合わせ'],['design','◐ デザイン'],['socials','⚙ サイト設定・SNS'],['staff','♧ スタッフ']];
  for(const [key,title]of items){const tab=button(title,()=>openSection(key));tab.dataset.section=key;tabs.append(tab);}
  tabs.append(node('p','販売・受付はLivePocketを利用します。GOODS・Q&A・デザイン・メール受信・スタッフ設定は開発予定です。','hint'));
 }
@@ -194,8 +195,8 @@ function render(){
  const fields=fieldGroups[group]||[];
  const extras=node('details',undefined,'extra-fields');extras.append(node('summary','見出し・ボタン・案内文を編集'));target.append(extras);
  if(fields.length){content.copy ||= {};for(const entry of fields){content.copy[entry.id] ||= {label:entry.label,values:Object.fromEntries(entry.defaults.map((v,i)=>[i,v]))};const item=content.copy[entry.id];for(const k of entry.defaults.map((_,i)=>String(i))){item.values[k] ??= entry.defaults[Number(k)];}for(const k of entry.defaults.map((_,i)=>String(i)))field(extras,item.values,k,entry.label+(Object.keys(item.values).length>1?`（${Number(k)+1}行目）`:''));}}
- const uiGroups={members:['memberKicker','profileHeading','profileButton','membersEmpty'],albums:['galleryPlaceholder'],youtube:['videoPreparing','playButton'],ticket:['ticketPreparing'],contact:['externalFormReady','composeEmail','emailHelp','contactReady','contactPreparing']};
- for(const key of uiGroups[current]||[])field(extras,content.ui,key,({memberKicker:'プロフィール上部のラベル',profileHeading:'プロフィール見出し',profileButton:'写真に重ねるボタン',membersEmpty:'メンバー未登録時の案内',galleryPlaceholder:'アルバム未登録時の案内',videoPreparing:'動画未登録時の案内',playButton:'動画再生ボタン',ticketPreparing:'販売準備中の案内',externalFormReady:'外部フォームの案内',composeEmail:'メール作成ボタン',emailHelp:'メール送信の説明',contactReady:'受付中の案内',contactPreparing:'受付準備中の案内'})[key]);
+ const uiGroups={members:['memberKicker','profileHeading','profileButton','membersEmpty'],guestAlbums:['guestGalleryPlaceholder'],albums:['galleryPlaceholder'],youtube:['videoPreparing','playButton'],ticket:['ticketPreparing'],contact:['externalFormReady','composeEmail','emailHelp','contactReady','contactPreparing']};
+ for(const key of uiGroups[current]||[])field(extras,content.ui,key,({memberKicker:'プロフィール上部のラベル',profileHeading:'プロフィール見出し',profileButton:'写真に重ねるボタン',membersEmpty:'メンバー未登録時の案内',guestGalleryPlaceholder:'ゲストアルバム未登録時の案内',galleryPlaceholder:'アルバム未登録時の案内',videoPreparing:'動画未登録時の案内',playButton:'動画再生ボタン',ticketPreparing:'販売準備中の案内',externalFormReady:'外部フォームの案内',composeEmail:'メール作成ボタン',emailHelp:'メール送信の説明',contactReady:'受付中の案内',contactPreparing:'受付準備中の案内'})[key]);
  for(const d of target.querySelectorAll('details[data-item-id]'))if(opened.includes(d.dataset.itemId))d.open=true;
  if(current==='site'){
   const primary=node('div',undefined,'primary-fields');const media=target.querySelector('[data-field="heroImage"]');
@@ -248,7 +249,7 @@ $('#preview-size').onchange=e=>$('#preview-content').classList.toggle('phone',e.
 $('#export-draft').onclick=()=>{const url=URL.createObjectURL(new Blob([JSON.stringify(content,null,2)],{type:'application/json'}));const a=node('a');a.href=url;a.download='fuku-draft-'+new Date().toISOString().slice(0,10)+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);};
 $('#save').onclick=run(save);
 $('#preview').onclick=run(async()=>{validateContent(content);sessionStorage.setItem(DRAFT_KEY,JSON.stringify(content));window.open('/?preview=1','_blank');});
-$('#publish').onclick=run(async()=>{validateContent(content);if(!config.url||pending)return;$('#publish-summary').textContent=`表示するメンバー ${content.members.filter(m=>m.published!==false).length}人／LIVEアルバム ${content.albums.length}件`;$('#publish-dialog').showModal();});
+$('#publish').onclick=run(async()=>{validateContent(content);if(!config.url||pending)return;$('#publish-summary').textContent=`表示するメンバー ${content.members.filter(m=>m.published!==false).length}人／LIVEアルバム ${content.albums.length}件／ゲストアルバム ${content.guestAlbums.length}件`;$('#publish-dialog').showModal();});
 $('#cancel-publish').onclick=()=>$('#publish-dialog').close();
 $('#confirm-publish').onclick=run(async()=>{const b=$('#confirm-publish');b.disabled=true;$('#editor').inert=true;$('#tabs').inert=true;try{await save();await api('/rest/v1/rpc/fuku_website_publish',{method:'POST',body:JSON.stringify({expected_revision:revision})});$('#publish-dialog').close();notify('公開しました！公開サイトでご確認ください。');$('#state').textContent='公開済み';}finally{b.disabled=false;$('#editor').inert=false;$('#tabs').inert=false;}});
 $('#login-form').onsubmit=async e=>{e.preventDefault();const b=e.target.querySelector('button');b.disabled=true;try{const f=new FormData(e.target);const r=await api('/auth/v1/token?grant_type=password',{method:'POST',body:JSON.stringify({email:f.get('email'),password:f.get('password')})});token=r.access_token;e.target.reset();const users=await api('/rest/v1/fuku_website_admins?select=user_id');if(!users.length){token=null;throw new Error('このアカウントにはサイト管理権限がありません。');}await start();notify('ログインしました。');}catch(e){notify(e.message);}finally{b.disabled=false;}};
