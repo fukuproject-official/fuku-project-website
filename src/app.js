@@ -115,12 +115,30 @@ function renderMember(member,selectedPhoto=null) {
   if(links.childElementCount) details.append(links);
   content.append(details); openModal(content);
 }
-function showAlbum(album){
- const body=el('div','modal-album');const title=el('h2','',album.title);title.id='modal-title';body.append(title);if(album.date)body.append(el('p','micro',album.date));
- const grid=el('div','album-photos');(album.photos||[]).filter(item=>item.image).forEach((item,i)=>{
-  const button=el('button');button.setAttribute('aria-label',`写真${i+1}を大きく見る`);const photo=image(item.image,item.alt||album.title);photo.style.objectPosition=item.imagePosition||'50% 50%';button.append(photo);
-  button.onclick=()=>{const view=el('div','modal-gallery');const heading=el('h2','',album.title);heading.id='modal-title';const back=el('button','album-back','アルバムに戻る');back.onclick=()=>showAlbum(album);view.append(back,heading,image(item.image,item.alt||album.title,false));openModal(view);};grid.append(button);
- });body.append(grid);openModal(body);
+function showAlbum(album,track,opener){
+ const cards=[...track.childNodes];const photos=(album.photos||[]).filter(item=>item.image);
+ track.classList.add('album-expanded');track.replaceChildren();
+ const body=el('div','album-page'),back=el('button','album-back','← アルバム一覧に戻る');
+ back.onclick=()=>{track.classList.remove('album-expanded');track.replaceChildren(...cards);opener.focus({preventScroll:true});track.scrollIntoView({block:'start',behavior:'instant'});};
+ const title=el('h3','album-page-title',album.title);title.tabIndex=-1;
+ body.append(back,title);if(album.date)body.append(el('p','micro',album.date));
+ const grid=el('div','album-page-grid');
+ photos.forEach((item,i)=>{const button=el('button','album-photo-button');button.setAttribute('aria-label',`${album.title} 写真${i+1}を大きく見る`);const photo=image(item.image,item.alt||`${album.title} 写真${i+1}`);photo.style.objectPosition=item.imagePosition||'50% 50%';button.append(photo);button.onclick=()=>openPhotoViewer(album,photos,i,button);grid.append(button);});
+ body.append(grid);track.append(body);title.focus({preventScroll:true});track.scrollIntoView({block:'start',behavior:'instant'});
+}
+function openPhotoViewer(album,photos,start,opener){
+ if(!photos.length)return;
+ let index=start;const dialog=el('dialog','photo-viewer');dialog.setAttribute('aria-label',`${album.title} 写真ビューア`);
+ const top=el('div','photo-viewer-top'),title=el('p','photo-viewer-title',album.title),close=el('button','photo-viewer-close','閉じる ×');close.setAttribute('aria-label','写真を閉じる');top.append(title,close);
+ const stage=el('div','photo-viewer-stage'),picture=image(photos[index].image,photos[index].alt||album.title,false);picture.removeAttribute('width');picture.removeAttribute('height');stage.append(picture);
+ const previous=el('button','photo-viewer-arrow previous','‹'),next=el('button','photo-viewer-arrow next','›');previous.setAttribute('aria-label','前の写真');next.setAttribute('aria-label','次の写真');previous.hidden=next.hidden=photos.length<2;
+ const counter=el('p','photo-viewer-counter');counter.setAttribute('role','status');counter.setAttribute('aria-live','polite');
+ const update=()=>{const photo=photos[index];picture.src=imageUrl(photo.image);picture.alt=photo.alt||`${album.title} 写真${index+1}`;counter.textContent=`${index+1} / ${photos.length}`;};
+ const step=delta=>{index=(index+delta+photos.length)%photos.length;update();};previous.onclick=()=>step(-1);next.onclick=()=>step(1);close.onclick=()=>dialog.close();
+ dialog.addEventListener('keydown',e=>{if(e.key==='ArrowLeft'||e.key==='ArrowRight'){e.preventDefault();step(e.key==='ArrowLeft'?-1:1);}});
+ let touch=null;stage.addEventListener('touchstart',e=>{touch=e.touches.length===1?{x:e.touches[0].clientX,y:e.touches[0].clientY}:null;},{passive:true});stage.addEventListener('touchend',e=>{if(!touch)return;const dx=e.changedTouches[0].clientX-touch.x,dy=e.changedTouches[0].clientY-touch.y;if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)*1.5)step(dx<0?1:-1);touch=null;},{passive:true});
+ dialog.append(top,stage,previous,next,counter);document.body.append(dialog);document.body.classList.add('modal-open');
+ dialog.addEventListener('close',()=>{document.body.classList.remove('modal-open');dialog.remove();opener.focus({preventScroll:true});},{once:true});update();dialog.showModal();close.focus();
 }
 function setupMotion() {
   const preference = matchMedia('(prefers-reduced-motion: reduce)');
@@ -198,7 +216,7 @@ async function init() {
     const first=album.photos.find(photo=>photo.image);
     const card=el('button','album-card reveal');card.setAttribute('aria-label',`${album.title}のアルバムを開く`);
     const cover=el('span','album-cover');const photo=image(first.image,first.alt||album.title);photo.style.objectPosition=first.imagePosition||'50% 50%';cover.append(photo);
-    card.append(cover,el('span','album-name',album.title));if(album.date)card.append(el('span','micro',album.date));card.onclick=()=>showAlbum(album);$(track).append(card);
+    card.append(cover,el('span','album-name',album.title));if(album.date)card.append(el('span','micro',album.date));card.onclick=()=>showAlbum(album,$(track),card);$(track).append(card);
   });
   if(!albums.length) $(track).append(el('p','body-copy',emptyText));
   }
