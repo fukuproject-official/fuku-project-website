@@ -435,5 +435,21 @@
       ]
     }
   ],
-  "ticket": []
+  "ticket": [],
+  "guestAlbums": [
+    {
+      "id": "guest-heading",
+      "label": "見出し1（英語）",
+      "defaults": [
+        "GUEST GALLERY"
+      ]
+    },
+    {
+      "id": "guest-subheading",
+      "label": "見出し2（日本語）",
+      "defaults": [
+        "ゲストとともに、音を重ねる。"
+      ]
+    }
+  ]
 }
