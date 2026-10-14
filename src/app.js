@@ -97,9 +97,15 @@ function performances(events){
  const track=el('div','performance-track');track.tabIndex=0;track.setAttribute('aria-label','出演情報を横にスクロール');events.filter(e=>!isPastPerformance(e)).forEach(e=>track.append(performanceCard(e)));
  if(!track.children.length)area.append(el('p','body-copy','今後の出演情報は、決まり次第お知らせします。'));else{const controls=el('div','performance-controls');for(const [label,direction]of [['前の出演情報',-1],['次の出演情報',1]]){const b=el('button','',direction<0?'←':'→');b.setAttribute('aria-label',label);b.onclick=()=>track.scrollBy({left:direction*(track.firstElementChild.getBoundingClientRect().width+24),behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});controls.append(b);}area.append(controls,track);}$('#next-live').append(area);
 }
-function renderMember(member) {
+function renderMember(member,selectedPhoto=null) {
   const content = el('div', 'modal-member');
-  const portrait = image(member.image, member.imageAlt); portrait.style.objectPosition = member.imagePosition || "50% 50%"; content.append(portrait);
+  const portrait = image(member.image, member.imageAlt); portrait.style.objectPosition = member.imagePosition || "50% 50%";
+  const media=el('div','member-media');media.append(portrait);
+  const setPortrait=photo=>{portrait.src=imageUrl(photo.image);portrait.alt=photo.alt||photo.imageAlt||member.name;portrait.style.objectPosition=photo.imagePosition||'50% 50%';};
+  if(selectedPhoto)setPortrait(selectedPhoto);
+  const photos=(member.photos||[]).filter(p=>p.image).slice(0,6);
+  if(photos.length){const thumbs=el('div','member-thumbnails');for(const [i,photo]of [member,...photos].entries()){const b=el('button');b.setAttribute('aria-label',i?`写真${i}を表示`:'メイン写真を表示');b.append(image(photo.image,photo.alt||member.name));b.onclick=()=>setPortrait(photo);thumbs.append(b);}media.append(thumbs);}
+  content.append(media);
   const details = el('div');
   details.append(el('p', 'eyebrow', copy('memberKicker', 'MEMBER')));
   const heading = el('h2', '', member.name); heading.id = 'modal-title';
@@ -183,17 +189,19 @@ async function init() {
     const card = el('button', 'member-card reveal'); card.setAttribute('aria-label', `${member.name}のプロフィールを開く`);
     const photo = el('span', 'member-photo'); const portrait = image(member.image, member.imageAlt); portrait.style.objectPosition = member.imagePosition || '50% 50%'; photo.append(portrait, el('span', 'member-overlay', copy('profileButton', 'VIEW PROFILE')));
     const name = el('span', 'member-name', member.name);
-    card.append(photo, name, el('span', 'member-part', member.part)); card.addEventListener('click', () => renderMember(member)); $('#member-grid').append(card);
+    card.append(photo, name, el('span', 'member-part', member.part)); card.addEventListener('click', () => renderMember(member)); const entry=el('div','member-entry');entry.append(card);const extras=(member.photos||[]).filter(p=>p.image).slice(0,6);if(extras.length){const thumbs=el('div','member-thumbnails');extras.forEach((photo,i)=>{const b=el('button');b.setAttribute('aria-label',`${member.name}の写真${i+1}を大きく見る`);b.append(image(photo.image,photo.alt||member.name));b.onclick=()=>renderMember(member,photo);thumbs.append(b);});entry.append(thumbs);}$('#member-grid').append(entry);
   });
   if (!members.length) $('#member-grid').append(el('p', 'body-copy', copy('membersEmpty', 'メンバー情報は準備中です。')));
-  const albums = (content.albums || []).filter(album=>(album.photos||[]).some(photo=>photo.image));
+  for(const [albumItems,track,emptyText]of [[content.guestAlbums,'#guest-gallery-track',copy('guestGalleryPlaceholder','ゲストの写真は、順次公開します。')],[content.albums,'#gallery-track',copy('galleryPlaceholder','LIVEの写真は、開催後に公開します。')]]){
+  const albums = (albumItems || []).filter(album=>(album.photos||[]).some(photo=>photo.image));
   albums.forEach(album => {
     const first=album.photos.find(photo=>photo.image);
     const card=el('button','album-card reveal');card.setAttribute('aria-label',`${album.title}のアルバムを開く`);
     const cover=el('span','album-cover');const photo=image(first.image,first.alt||album.title);photo.style.objectPosition=first.imagePosition||'50% 50%';cover.append(photo);
-    card.append(cover,el('span','album-name',album.title));if(album.date)card.append(el('span','micro',album.date));card.onclick=()=>showAlbum(album);$('#gallery-track').append(card);
+    card.append(cover,el('span','album-name',album.title));if(album.date)card.append(el('span','micro',album.date));card.onclick=()=>showAlbum(album);$(track).append(card);
   });
-  if(!albums.length) $('#gallery-track').append(el('p','body-copy',copy('galleryPlaceholder','LIVEの写真は、開催後に公開します。')));
+  if(!albums.length) $(track).append(el('p','body-copy',emptyText));
+  }
   for (const [key, value] of Object.entries(content.socials)) {
     if(key==='x')continue;
     $$('[data-socials]').forEach(container => container.append(socialControl(key, value, true)));

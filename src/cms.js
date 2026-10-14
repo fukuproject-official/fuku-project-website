@@ -1,5 +1,5 @@
-export const SECTION_IDS={nextLive:'next-live',about:'about',mind:'mind',members:'members',albums:'gallery',youtube:'youtube',socials:'follow',contact:'contact'};
-export function sectionOrder(value){const keys=Object.keys(SECTION_IDS);return [...new Set([...(Array.isArray(value)?value:[]).filter(k=>keys.includes(k)),...keys])];}
+export const SECTION_IDS={nextLive:'next-live',about:'about',mind:'mind',members:'members',guestAlbums:'guest-gallery',albums:'gallery',youtube:'youtube',socials:'follow',contact:'contact'};
+export function sectionOrder(value){const keys=Object.keys(SECTION_IDS);const result=[...new Set([...(Array.isArray(value)?value:[]).filter(k=>keys.includes(k)),...keys])];if(!Array.isArray(value)||!value.includes('guestAlbums')){result.splice(result.indexOf('guestAlbums'),1);result.splice(result.indexOf('members')+1,0,'guestAlbums');}return result;}
 export const DRAFT_KEY = 'fuku-editor-draft-v1';
 export function youtubeId(value) {
   if (!value) return null;
@@ -16,7 +16,7 @@ export function youtubeId(value) {
 export function normalizeContent(c) {
  c.sectionOrder=sectionOrder(c.sectionOrder);
  c.nextLive.titleMobile ??= '';c.nextLive.openTime ??= '';c.nextLive.startTime ??= '';c.nextLive.address ??= '';c.nextLive.performances ??= [];
- c.albums ||= [];c.site.heroVideo ||= '';c.nextLive.image ||= '';c.nextLive.imageAlt ||= '';
+ c.guestAlbums ??= [];for(const m of c.members)m.photos ??= [];c.albums ||= [];c.site.heroVideo ||= '';c.nextLive.image ||= '';c.nextLive.imageAlt ||= '';
  for(const id of ['text-20','text-89']){const item=c.copy?.[id];if(item&&Object.keys(item.values).length>1)item.values={'0':Object.values(item.values).join('')};}
  const old=c.copy?.['text-86']?.values;if(old)for(const k of Object.keys(old))old[k]=old[k].replace('プロフィールと今後の活動。','プロフィール。');
  delete c.socials.x;for(const m of c.members)delete m.socials.x;
@@ -31,8 +31,10 @@ export function validateContent(c) {
   const ids = new Set();
   for (const m of c.members) {
     if (!m.id || ids.has(m.id) || !m.name || !Array.isArray(m.upcomingActivities) || !m.socials) throw new Error('メンバーの名前・ID・活動情報を確認してください。');
+    if(m.photos && (!Array.isArray(m.photos)||m.photos.length>6||m.photos.some(p=>!p||typeof p.image!=='string')))throw new Error('メンバーの追加写真は6枚まで登録できます。');
     ids.add(m.id);
   }
+  if(c.guestAlbums && (!Array.isArray(c.guestAlbums)||c.guestAlbums.some(a=>!a||!a.title||!Array.isArray(a.photos))))throw new Error('ゲストアルバムのタイトルと写真を確認してください。');
   if(c.albums && (!Array.isArray(c.albums)||c.albums.some(a=>!a.title||!Array.isArray(a.photos))))throw new Error('アルバムのタイトルと写真を確認してください。');
   if(c.nextLive.performances && (!Array.isArray(c.nextLive.performances)||c.nextLive.performances.some(e=>!e.id||typeof e.title!=='string'||!e.title.trim())))throw new Error('出演情報のタイトルを入力してください。');
   if (c.youtube.videoId && !youtubeId(c.youtube.videoId)) throw new Error('YouTubeのURLを確認してください。');

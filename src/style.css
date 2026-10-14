@@ -145,3 +145,12 @@ h2[data-copy-id],h3[data-copy-id]{white-space:pre-line}
 .event-meta-row>span:last-child{white-space:pre-wrap}
 .event-map-link{display:table;font-size:13px;line-height:1.6;margin-top:9px;padding:5px 0;color:inherit;opacity:.75;border-bottom:1px solid currentColor;white-space:normal}.event-map-link:hover{opacity:1}
 #live-description{margin:24px 0}
+
+/* Member additional photos are independent of the main portrait. */
+.member-entry{min-width:0}.member-entry>.member-card{width:100%}
+.member-thumbnails{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:12px}
+.member-thumbnails button{padding:0;border:0;background:transparent;cursor:pointer;min-width:0}
+.member-thumbnails img{display:block;width:100%;aspect-ratio:1;object-fit:cover;transition:opacity .2s}
+.member-thumbnails button:hover img{opacity:.75}.member-thumbnails button:focus-visible{outline:2px solid currentColor;outline-offset:3px}
+.member-media{min-width:0}.member-media>img{display:block;width:100%;max-height:65vh;object-fit:contain}
+#guest-gallery .section-heading h2{font-size:clamp(40px,7vw,110px)}
