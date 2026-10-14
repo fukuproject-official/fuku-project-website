@@ -207,7 +207,7 @@ async function init() {
     const card = el('button', 'member-card reveal'); card.setAttribute('aria-label', `${member.name}のプロフィールを開く`);
     const photo = el('span', 'member-photo'); const portrait = image(member.image, member.imageAlt); portrait.style.objectPosition = member.imagePosition || '50% 50%'; photo.append(portrait, el('span', 'member-overlay', copy('profileButton', 'VIEW PROFILE')));
     const name = el('span', 'member-name', member.name);
-    card.append(photo, name, el('span', 'member-part', member.part)); card.addEventListener('click', () => renderMember(member)); const entry=el('div','member-entry');entry.append(card);const extras=(member.photos||[]).filter(p=>p.image).slice(0,6);if(extras.length){const thumbs=el('div','member-thumbnails');extras.forEach((photo,i)=>{const b=el('button');b.setAttribute('aria-label',`${member.name}の写真${i+1}を大きく見る`);b.append(image(photo.image,photo.alt||member.name));b.onclick=()=>renderMember(member,photo);thumbs.append(b);});entry.append(thumbs);}$('#member-grid').append(entry);
+    card.append(photo, name, el('span', 'member-part', member.part)); card.addEventListener('click', () => renderMember(member)); $('#member-grid').append(card);
   });
   if (!members.length) $('#member-grid').append(el('p', 'body-copy', copy('membersEmpty', 'メンバー情報は準備中です。')));
   for(const [albumItems,track,emptyText]of [[content.guestAlbums,'#guest-gallery-track',copy('guestGalleryPlaceholder','ゲストの写真は、順次公開します。')],[content.albums,'#gallery-track',copy('galleryPlaceholder','LIVEの写真は、開催後に公開します。')]]){
